@@ -79,7 +79,7 @@ const cartas = [
   {
     icono: "💌", nombre: "De tu hijo mayor", pista: "Una carta desde el corazón 💛",
     titulo: "Querida Mami",
-    cuerpo: `carta martin`,
+    cuerpo: `Mami no se que escribir pero quiero decir que te amo mucho y que aunque no te escriba o te llamé mucho siempre te he amado`,
     firma: "Con todo mi amor, tin 💛"
   },
   {
