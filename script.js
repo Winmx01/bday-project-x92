@@ -10,8 +10,8 @@ document.addEventListener('DOMContentLoaded', () => {
    ⚙️  CONFIGURACIÓN — ✏️ EDITA SOLO ESTE BLOQUE
    ══════════════════════════════════════════════════════════════════ */
 const CONFIG = {
-  PASSWORD: "Champa",// ← CAMBIA ESTO
-  WARNING_MSG: "¡Ey! No hagas trampa, esto es solo para mi mami 😄",
+  PASSWORD: "amor",   // ← CAMBIA ESTO
+  WARNING_MSG: "¡Ey! No hagas trampa, esto es solo para mamá 😄",
   TIMINGS: { UNLOCK: 700, CONFETTI_DELAY: 420, SHAKE: 850, TOAST: 3200 }
 };
 
@@ -24,12 +24,12 @@ const CONFIG = {
    ══════════════════════════════════════════════════════════════════ */
 
 const CATEGORY_META = {
-  mami:       { emoji: '💚',        label: 'Mami'       },
+  mami:       { emoji: '👩',        label: 'Mamá'       },
   mamita:     { emoji: '💕',        label: 'Mamita'     },
-  hermanitos: { emoji: '💛❤️', label: 'Hermanitos' },
-  lostres:    { emoji: '💚💛❤️',  label: 'Los Tres'   },
-  tin:        { emoji: '💛',        label: 'Tin'        },
-  tita:       { emoji: '❤️',        label: 'Tita'       }
+  hermanitos: { emoji: '👨‍👩‍👧‍👦', label: 'Hermanitos' },
+  lostres:    { emoji: '👨‍👩‍👧',  label: 'Los Tres'   },
+  tin:        { emoji: '🎭',        label: 'Tin'        },
+  tita:       { emoji: '✨',        label: 'Tita'       }
 };
 
 const ALBUM_PHOTOS = {
@@ -50,11 +50,12 @@ const ALBUM_PHOTOS = {
     'fotos/hermanitos1.jpg',  'fotos/hermanitos2.jpg',  'fotos/hermanitos3.jpg',
     'fotos/hermanitos4.jpg',  'fotos/hermanitos5.jpg',  'fotos/hermanitos6.jpg',
     'fotos/hermanitos7.jpg',  'fotos/hermanitos8.jpg',  'fotos/hermanitos9.jpg',
-    'fotos/hermanitos10.jpg'
+    'fotos/hermanitos10.jpg', 'fotos/hermanitos11.jpg', 'fotos/hermanitos12.jpg',
+    'fotos/hermanitos13.jpg', 'fotos/hermanitos14.jpg', 'fotos/hermanitos15.jpg'
   ],
 
   lostres: [
-    'fotos/lostres1.jpg', 'fotos/lostres2.jpg',  'fotos/lostres3.jpg',
+    'fotos/lostres1.webp', 'fotos/lostres2.jpg',  'fotos/lostres3.jpg',
     'fotos/lostres4.jpg',  'fotos/lostres5.jpg',  'fotos/lostres6.jpg',
     'fotos/lostres7.jpg',  'fotos/lostres8.jpg',  'fotos/lostres9.jpg',
     'fotos/lostres10.jpg', 'fotos/lostres11.jpg', 'fotos/lostres12.jpg'
@@ -77,21 +78,43 @@ const ALBUM_PHOTOS = {
    ══════════════════════════════════════════════════════════════════ */
 const cartas = [
   {
-    icono: "💌", nombre: "De tu hijo mayor", pista: "Una carta desde el corazón",
+    icono: "💌", nombre: "De tu hijo/a mayor", pista: "Una carta desde el corazón",
     titulo: "Querida Mamá",
-    cuerpo: `carta martin`,
-    firma: "Con todo mi amor, tu hijo 💛"
+    cuerpo: `Hay personas que no necesitan haber visto el mundo para entenderlo. Tú eres una de esas personas. Desde niño/a supe que eras diferente: tenías una forma de ver las cosas que hacía que todo pareciera posible.
+
+Recuerdo cuando me caí de la bicicleta por primera vez y corriste hacia mí antes de que pudiera llorar. No dijiste "te lo dije". Solo me abrazaste y me dijiste: "Los valientes también se caen".
+
+Hoy, con los años que tengo, sigo escuchando esa frase cuando las cosas se ponen difíciles. Esa eres tú: la voz que me sostiene aún cuando no estás.
+
+Gracias por enseñarme que el amor no se dice, se demuestra.`,
+    firma: "Con todo mi amor, tu hijo/a 🌸"
   },
   {
-    icono: "💌", nombre: "De tu hijo menor", pista: "Una carta desde el corazón",
-    titulo: "Querida Mamá",
-    cuerpo: `carta jota`,
-    firma: "Con todo mi amor, tu hijo ❤️"
+    icono: "🌹", nombre: "Una promesa para ti", pista: "Algo que siempre quisimos decirte",
+    titulo: "Nuestra Promesa",
+    cuerpo: `Mamá,
+
+Prometemos nunca olvidar el sacrificio silencioso que has hecho por nosotros. Esas noches que no dormiste, esas renuncias que nunca nombraste, esos sueños que pausaste para que los nuestros pudieran crecer.
+
+Prometemos llamarte más seguido, no solo cuando necesitamos algo, sino para preguntarte cómo estás tú.
+
+Prometemos cuidarte como tú nos has cuidado. Con paciencia, con ternura.
+
+Y sobre todo, prometemos decirte "te quiero" más veces. La vida es corta y tú mereces escucharlo todos los días.`,
+    firma: "Tus hijos, para siempre 💛"
   },
   {
     icono: "⭐", nombre: "Lo que el mundo ve en ti", pista: "Cosas que quizás no sabes de ti misma",
     titulo: "Lo Que Tú No Ves",
-    cuerpo: `cosas onitas de mi mami`,
+    cuerpo: `Mamá, probablemente no lo sabes, pero…
+
+Cuando entras a una habitación, la temperatura sube un par de grados. Hay algo en tu presencia que hace que todo se sienta más seguro, más cálido, más en su lugar.
+
+La gente habla de ti con una sonrisa involuntaria. "Tu mamá es increíble", nos dicen. Y nosotros solo respondemos: "Lo sabemos".
+
+Pero lo más increíble de todo es que con todo lo extraordinaria que eres, sigues siendo simplemente… mamá. Nuestra mamá. El centro de nuestra historia.
+
+Feliz cumpleaños a la persona más especial de nuestro universo.`,
     firma: "Con admiración infinita 🌟"
   }
 ];
@@ -227,8 +250,7 @@ const lockScreen = document.getElementById('lockScreen');
 
 function validar() {
   if (lockInput.value.trim().toLowerCase() === CONFIG.PASSWORD.toLowerCase()) {
-    lockScreen.classList.add('unlocking');
-    setTimeout(revelarContenido, CONFIG.TIMINGS.UNLOCK);
+    iniciarTransicion();
   } else {
     lockError.textContent = "Eso no suena bien… ¡inténtalo de nuevo! 💫";
     lockInput.classList.add('shake');
@@ -240,30 +262,268 @@ function validar() {
   }
 }
 
+/* ══════════════════════════════════════════════════════════════════
+   🎁  TRANSICIÓN ESPECTACULAR DE APERTURA
+   ──────────────────────────────────────────────────────────────────
+   Secuencia:
+   0 ms  — El botón pulsa, el regalo tiembla con expectativa
+   300ms — La tarjeta "vuela" hacia arriba y desaparece
+   600ms — Flash de luz dorada llena la pantalla
+   900ms — El overlay de transición se despliega desde el centro
+             mostrando el emoji 🎁 → 🎀 animado con texto
+  1800ms — El contenido aparece con un "unfold" tipo carta
+  2400ms — Los pétalos / partículas explotan desde el centro
+  3200ms — El overlay se disuelve, la página queda visible
+   ══════════════════════════════════════════════════════════════════ */
+function iniciarTransicion() {
+  // ── Fase 1: el botón pulsa y el regalo salta ──────────────────
+  const card = lockScreen.querySelector('.lock-card');
+  card.style.animation = 'none';
+  card.style.transform = 'scale(1.05)';
+  card.style.transition = 'transform .15s ease';
+
+  setTimeout(() => {
+    // ── Fase 2: la tarjeta sube y desvanece ──────────────────────
+    card.style.transition = 'transform .5s cubic-bezier(.4,0,.2,1), opacity .5s ease';
+    card.style.transform  = 'translateY(-60px) scale(.92)';
+    card.style.opacity    = '0';
+  }, 150);
+
+  setTimeout(() => {
+    // ── Fase 3: flash dorado ─────────────────────────────────────
+    const flash = document.createElement('div');
+    flash.id = 'transFlash';
+    flash.style.cssText = `
+      position:fixed;inset:0;z-index:800;pointer-events:none;
+      background:radial-gradient(circle at 50% 50%, #fff9e6 0%, #f0c84a 40%, transparent 70%);
+      opacity:0;transition:opacity .25s ease;`;
+    document.body.appendChild(flash);
+    requestAnimationFrame(() => { flash.style.opacity = '1'; });
+    setTimeout(() => { flash.style.opacity = '0'; }, 350);
+    setTimeout(() => { flash.remove(); }, 650);
+
+    // ── Fase 4: overlay de apertura ──────────────────────────────
+    construirOverlay();
+  }, 500);
+}
+
+function construirOverlay() {
+  // Paneles que se abren como una caja de regalo
+  const ov = document.createElement('div');
+  ov.id = 'giftOverlay';
+  ov.innerHTML = `
+    <div class="go-panel go-top"></div>
+    <div class="go-panel go-bottom"></div>
+    <div class="go-panel go-left"></div>
+    <div class="go-panel go-right"></div>
+    <div class="go-center">
+      <div class="go-gift" id="goGift">🎁</div>
+      <p class="go-msg" id="goMsg"></p>
+      <div class="go-sparkles" id="goSparkles"></div>
+    </div>`;
+  document.body.appendChild(ov);
+
+  // Asegurar que los estilos del overlay estén inyectados
+  if (!document.getElementById('giftOverlayStyles')) {
+    const s = document.createElement('style');
+    s.id = 'giftOverlayStyles';
+    s.textContent = OVERLAY_CSS;
+    document.head.appendChild(s);
+  }
+
+  // Animar entrada de paneles
+  requestAnimationFrame(() => {
+    ov.classList.add('go-opening');
+  });
+
+  // Texto que se escribe letra a letra
+  const mensajes = [
+    { t: 600,  txt: '¡Con todo el amor del mundo…', cls: 'go-msg--small' },
+    { t: 1800, txt: '🎀 Feliz Cumpleaños Mamá 🎀',  cls: 'go-msg--big'   },
+  ];
+
+  mensajes.forEach(({ t, txt, cls }) => {
+    setTimeout(() => {
+      typewriterEl(document.getElementById('goMsg'), txt, cls);
+    }, t);
+  });
+
+  // Cambio emoji regalo → lazo
+  setTimeout(() => {
+    const g = document.getElementById('goGift');
+    if (g) { g.textContent = '🎀'; g.classList.add('go-gift--open'); }
+  }, 900);
+
+  // Explosión de sparkles desde el centro
+  setTimeout(() => spawnSparkles(document.getElementById('goSparkles')), 1100);
+
+  // ── Fase final: disolver overlay y mostrar página ─────────────
+  setTimeout(() => {
+    lockScreen.style.display = 'none';
+
+    // Revelar contenido detrás del overlay
+    const content = document.getElementById('content');
+    content.style.display   = 'block';
+    content.style.opacity   = '0';
+    content.style.transform = 'scale(.97)';
+    content.style.transition = 'opacity 1s ease, transform 1s ease';
+
+    requestAnimationFrame(() => {
+      content.style.opacity   = '1';
+      content.style.transform = 'scale(1)';
+    });
+
+    // Disolver paneles hacia afuera
+    ov.classList.add('go-closing');
+
+    setTimeout(() => {
+      ov.remove();
+      content.style.transition = '';
+      content.style.transform  = '';
+      content.style.opacity    = '';
+
+      // Iniciar el resto de la página
+      buildAlbum();
+      buildAccordion();
+      initReveal();
+      PhotoRain.start(Object.values(ALBUM_PHOTOS).flat());
+      lanzarConfeti();
+    }, 900);
+
+  }, 3000);
+}
+
+/* ── Escribe texto letra a letra ──────────────────────────────── */
+function typewriterEl(el, text, cls) {
+  if (!el) return;
+  el.textContent = '';
+  el.className   = `go-msg ${cls}`;
+  let i = 0;
+  const iv = setInterval(() => {
+    el.textContent += text[i++];
+    if (i >= text.length) clearInterval(iv);
+  }, 42);
+}
+
+/* ── Genera partículas/sparkles desde el centro ──────────────── */
+function spawnSparkles(container) {
+  if (!container) return;
+  const symbols = ['✨','🌸','💚','🌿','💕','⭐','🎀','✦','🌟','💛'];
+  for (let i = 0; i < 28; i++) {
+    const sp  = document.createElement('span');
+    sp.textContent  = symbols[Math.floor(Math.random() * symbols.length)];
+    const angle     = (i / 28) * 360;
+    const dist      = 80 + Math.random() * 120;
+    const tx        = Math.cos(angle * Math.PI / 180) * dist;
+    const ty        = Math.sin(angle * Math.PI / 180) * dist;
+    const delay     = Math.random() * 400;
+    const size      = .9 + Math.random() * 1.1;
+    sp.style.cssText = `
+      position:absolute;top:50%;left:50%;
+      font-size:${size}rem;opacity:0;
+      transform:translate(-50%,-50%);
+      animation: sparkle-fly .9s ${delay}ms ease forwards;
+      --tx:${tx}px;--ty:${ty}px;`;
+    container.appendChild(sp);
+  }
+}
+
+/* CSS del overlay — inyectado una sola vez en el <head> */
+const OVERLAY_CSS = `
+#giftOverlay {
+  position: fixed; inset: 0; z-index: 700;
+  display: flex; align-items: center; justify-content: center;
+  pointer-events: none;
+}
+
+/* Paneles que forman la "caja" */
+.go-panel {
+  position: absolute;
+  background: linear-gradient(145deg, #1e4d29 0%, #3d7a4a 50%, #7dba8a 100%);
+  transition: transform 1.1s cubic-bezier(.77,0,.18,1);
+}
+.go-top    { top:0;    left:0; right:0;  height:52%; transform:translateY(0);   transform-origin:top; }
+.go-bottom { bottom:0; left:0; right:0;  height:52%; transform:translateY(0);   transform-origin:bottom; }
+.go-left   { left:0;   top:0;  bottom:0; width:52%;  transform:translateX(0);   transform-origin:left; }
+.go-right  { right:0;  top:0;  bottom:0; width:52%;  transform:translateX(0);   transform-origin:right; }
+
+/* Textura de cinta sobre los paneles */
+.go-top::after, .go-bottom::after {
+  content:'';position:absolute;left:0;right:0;height:8px;
+  background:linear-gradient(90deg,#c9a84c,#f0d97a,#c9a84c);
+  opacity:.8;
+}
+.go-top::after    { bottom:0; }
+.go-bottom::after { top:0; }
+.go-left::after, .go-right::after {
+  content:'';position:absolute;top:0;bottom:0;width:8px;
+  background:linear-gradient(180deg,#c9a84c,#f0d97a,#c9a84c);
+  opacity:.8;
+}
+.go-left::after  { right:0; }
+.go-right::after { left:0;  }
+
+/* Estado ABIERTO: paneles vuelan hacia afuera */
+#giftOverlay.go-opening .go-top    { transform: translateY(-102%); }
+#giftOverlay.go-opening .go-bottom { transform: translateY(102%);  }
+#giftOverlay.go-opening .go-left   { transform: translateX(-102%); }
+#giftOverlay.go-opening .go-right  { transform: translateX(102%);  }
+
+/* Estado CERRANDO: desvanece toda la capa */
+#giftOverlay.go-closing { opacity:0; transition: opacity .8s ease; }
+
+/* Centro con el emoji y texto */
+.go-center {
+  position: relative; z-index: 2;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 1.2rem; text-align: center; padding: 1rem;
+}
+
+.go-gift {
+  font-size: clamp(5rem, 15vw, 9rem);
+  animation: gift-appear .6s cubic-bezier(.34,1.56,.64,1) both;
+  display: block; line-height: 1;
+  filter: drop-shadow(0 8px 24px rgba(0,0,0,.25));
+}
+.go-gift--open {
+  animation: gift-pop .5s cubic-bezier(.34,1.56,.64,1) both !important;
+}
+
+.go-msg {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  color: white;
+  text-shadow: 0 2px 12px rgba(0,0,0,.4);
+  min-height: 2.5rem;
+  transition: all .3s ease;
+}
+.go-msg--small { font-size: clamp(1rem, 3vw, 1.4rem); font-weight: 300; font-style: italic; }
+.go-msg--big   { font-size: clamp(1.5rem, 5vw, 2.6rem); font-weight: 600; letter-spacing:.03em; }
+
+.go-sparkles {
+  position: absolute; inset: 0;
+  pointer-events: none; overflow: visible;
+}
+
+@keyframes gift-appear {
+  from { opacity:0; transform: scale(0) rotate(-20deg); }
+  to   { opacity:1; transform: scale(1) rotate(0deg);   }
+}
+@keyframes gift-pop {
+  0%   { transform: scale(1)    rotate(0deg);   }
+  40%  { transform: scale(1.35) rotate(12deg);  }
+  70%  { transform: scale(.9)   rotate(-6deg);  }
+  100% { transform: scale(1.1)  rotate(0deg);   }
+}
+@keyframes sparkle-fly {
+  0%   { opacity:0; transform:translate(-50%,-50%) scale(.3); }
+  40%  { opacity:1; }
+  100% { opacity:0; transform:translate(calc(-50% + var(--tx)), calc(-50% + var(--ty))) scale(1.2) rotate(360deg); }
+}
+`;
+
 document.getElementById('lockBtn').addEventListener('click', validar);
 lockInput.addEventListener('keydown', e => { if (e.key === 'Enter') validar(); });
-
-/* ══════════════════════════════════════════════════════════════════
-   🎉  REVELAR CONTENIDO
-   ══════════════════════════════════════════════════════════════════ */
-function revelarContenido() {
-  lockScreen.style.display = 'none';
-
-  const content = document.getElementById('content');
-  content.style.display = 'block';
-
-  // Construir secciones
-  buildAlbum();
-  buildAccordion();
-  initReveal();
-
-  // Arrancar lluvia de fotos en el canvas de fondo
-  const allSources = Object.values(ALBUM_PHOTOS).flat();
-  PhotoRain.start(allSources);
-
-  // Confeti de celebración
-  lanzarConfeti();
-}
 
 /* ══════════════════════════════════════════════════════════════════
    🎊  CONFETI
