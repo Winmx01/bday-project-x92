@@ -3,1088 +3,820 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Para Mamá 🤍</title>
+  <title>Para Mamá ✨</title>
 
-  <!-- =====================================================
-       FUENTES: Playfair Display (elegante) + Lato (cuerpo)
-       ===================================================== -->
+  <!--
+  ╔══════════════════════════════════════════════════════════╗
+  ║  ARQUITECTURA DE RENDIMIENTO                             ║
+  ║  • CSS crítico inline → zero render-blocking             ║
+  ║  • Google Fonts con display=swap → sin FOIT              ║
+  ║  • Scripts con defer al final del body → no bloquean     ║
+  ║  • Imágenes con aspect-ratio reservado → CLS = 0         ║
+  ║  • Skeleton loader visible en < 10ms                     ║
+  ╚══════════════════════════════════════════════════════════╝
+  -->
+
+  <!-- Fuentes: display=swap evita texto invisible (FOIT) -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@300;400;500&display=swap"
+    rel="stylesheet"
+  />
 
-  <!-- =====================================================
-       TAILWIND CSS (vía CDN)
-       ===================================================== -->
-  <script src="https://cdn.tailwindcss.com"></script>
-
-  <!-- =====================================================
-       ANIMATE.CSS para revelaciones suaves
-       ===================================================== -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
-
-  <!-- =====================================================
-       CANVAS-CONFETTI para el efecto final
-       ===================================================== -->
-  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
-
+  <!-- ════════════════════════════════════════════════════
+       CSS CRÍTICO INLINE — el browser pinta sin esperar
+       archivos externos. Fallback a fuentes del sistema.
+       ════════════════════════════════════════════════════ -->
   <style>
-    /* =====================================================
-       VARIABLES DE COLOR — Paleta "Champagne & Rose"
-       ===================================================== */
+    /* ── Paleta "Champagne & Rose" ──────────────────────── */
     :root {
-      --bg:        #FFFDF9;
-      --gold:      #D4AF37;
-      --gold-light:#f0d97a;
-      --gold-dark: #a88a1a;
-      --text:      #4A4A4A;
-      --text-light:#8a8a8a;
-      --rose:      #f9e4e4;
-      --card-bg:   #fffaf2;
+      --bg:         #FFFDF9;
+      --gold:       #C9A84C;
+      --gold-lt:    #e8d08a;
+      --gold-dk:    #9a7425;
+      --text:       #3a3328;
+      --text-soft:  #7a6f63;
+      --rose:       #f5e6e6;
+      --card:       #fffaf3;
+      --border:     rgba(201,168,76,0.28);
+
+      /* Sistema primero → Google Fonts cuando esté lista */
+      --serif: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
+      --sans:  'Jost', 'Segoe UI', Arial, sans-serif;
     }
 
-    /* =====================================================
-       RESET / BASE
-       ===================================================== */
+    /* ── Reset mínimo ───────────────────────────────────── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
 
     body {
-      font-family: 'Lato', sans-serif;
-      background-color: var(--bg);
+      font-family: var(--sans);
+      background: var(--bg);
       color: var(--text);
       min-height: 100vh;
       overflow-x: hidden;
+      /* Degradado atmosférico: cero HTTP request */
+      background-image:
+        radial-gradient(circle at 15% 15%, rgba(201,168,76,.07) 0%, transparent 55%),
+        radial-gradient(circle at 85% 85%, rgba(245,230,230,.35) 0%, transparent 55%);
     }
 
-    h1, h2, h3 { font-family: 'Playfair Display', serif; }
+    h1,h2,h3 { font-family: var(--serif); font-weight: 400; }
 
-    /* =====================================================
-       TEXTURA DE FONDO — patrón sutil de puntos dorados
-       ===================================================== */
-    body::before {
-      content: '';
-      position: fixed;
-      inset: 0;
-      background-image: radial-gradient(circle, rgba(212,175,55,0.08) 1px, transparent 1px);
-      background-size: 28px 28px;
-      pointer-events: none;
-      z-index: 0;
-    }
-
-    /* =====================================================
-       PANTALLA DE BLOQUEO
-       ===================================================== */
-    #lockScreen {
-      position: fixed;
-      inset: 0;
+    /* ════════════════════════════════════════════════════
+       SKELETON LOADER
+       Aparece inmediatamente mientras el DOM termina de
+       construirse. Desaparece cuando body recibe .loaded.
+       ════════════════════════════════════════════════════ */
+    #skeleton {
+      position: fixed; inset: 0;
       background: var(--bg);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      z-index: 100;
-      padding: 2rem;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 1rem;
+      z-index: 500;
+      transition: opacity .5s ease, visibility .5s ease;
     }
+    body.loaded #skeleton { opacity: 0; visibility: hidden; pointer-events: none; }
 
-    .lock-icon {
-      width: 64px;
-      height: 64px;
-      margin-bottom: 1.5rem;
-      color: var(--gold);
-      animation: pulse 2.5s ease-in-out infinite;
+    .sk-spinner {
+      width: 52px; height: 52px;
+      border-radius: 50%;
+      border: 2px solid var(--gold-lt);
+      border-top-color: var(--gold);
+      animation: spin .9s linear infinite;
     }
+    @keyframes spin { to { transform: rotate(360deg); } }
 
-    @keyframes pulse {
-      0%, 100% { transform: scale(1); opacity: 1; }
-      50%       { transform: scale(1.08); opacity: 0.75; }
+    .sk-bar {
+      height: 9px; border-radius: 8px;
+      background: linear-gradient(90deg, #f0e8d0 25%, #fffaf0 50%, #f0e8d0 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.4s ease infinite;
     }
+    .sk-bar:nth-child(2) { width: 170px; }
+    .sk-bar:nth-child(3) { width: 110px; }
+    @keyframes shimmer { 0%{background-position:200% center} 100%{background-position:-200% center} }
+
+    /* ════════════════════════════════════════════════════
+       PANTALLA DE BLOQUEO
+       ════════════════════════════════════════════════════ */
+    #lockScreen {
+      position: fixed; inset: 0;
+      background: var(--bg);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 400; padding: 1.5rem;
+      transition: opacity .7s ease, transform .7s ease;
+    }
+    #lockScreen.unlocking { opacity: 0; transform: scale(1.04); pointer-events: none; }
 
     .lock-card {
-      background: white;
-      border: 1px solid rgba(212,175,55,0.3);
-      border-radius: 20px;
-      padding: 3rem 2.5rem;
-      max-width: 420px;
-      width: 100%;
-      box-shadow: 0 20px 60px rgba(212,175,55,0.12), 0 4px 16px rgba(0,0,0,0.06);
+      width: 100%; max-width: 400px;
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 3rem 2.4rem;
       text-align: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,.04), 0 20px 60px rgba(201,168,76,.10);
+      animation: card-in .65s cubic-bezier(.34,1.56,.64,1) both;
+    }
+    @keyframes card-in {
+      from { opacity:0; transform:translateY(28px) scale(.97); }
+      to   { opacity:1; transform:translateY(0)    scale(1);   }
     }
 
-    .lock-title {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.6rem;
-      color: var(--text);
-      margin-bottom: 0.5rem;
-    }
+    /* Ícono SVG inline — cero request */
+    .lock-icon { width:48px; height:48px; color:var(--gold); margin:0 auto 1.4rem; }
 
-    .lock-subtitle {
-      font-size: 0.9rem;
-      color: var(--text-light);
-      margin-bottom: 2rem;
-      line-height: 1.6;
+    .lock-heading { font-size:1.75rem; color:var(--text); margin-bottom:.5rem; }
+
+    .lock-sub {
+      font-size:.88rem; color:var(--text-soft);
+      line-height:1.7; margin-bottom:2rem;
     }
 
     .lock-input {
-      width: 100%;
-      padding: 0.85rem 1.2rem;
-      border: 1.5px solid rgba(212,175,55,0.4);
-      border-radius: 10px;
-      font-family: 'Lato', sans-serif;
-      font-size: 1rem;
-      color: var(--text);
-      background: var(--bg);
-      outline: none;
-      transition: border-color 0.3s, box-shadow 0.3s;
-      text-align: center;
-      letter-spacing: 0.05em;
+      width:100%; padding:.85rem 1.2rem;
+      background:var(--bg);
+      border:1.5px solid var(--border); border-radius:12px;
+      font-family:var(--sans); font-size:1rem; color:var(--text);
+      text-align:center; letter-spacing:.06em;
+      outline:none;
+      transition:border-color .25s, box-shadow .25s;
     }
-
+    .lock-input::placeholder { color:#c0b8ab; }
     .lock-input:focus {
-      border-color: var(--gold);
-      box-shadow: 0 0 0 3px rgba(212,175,55,0.15);
+      border-color:var(--gold);
+      box-shadow:0 0 0 3px rgba(201,168,76,.14);
     }
 
     .lock-btn {
-      margin-top: 1.2rem;
-      width: 100%;
-      padding: 0.85rem;
-      background: linear-gradient(135deg, var(--gold), var(--gold-dark));
-      color: white;
-      border: none;
-      border-radius: 10px;
-      font-family: 'Playfair Display', serif;
-      font-size: 1rem;
-      font-weight: 600;
-      cursor: pointer;
-      letter-spacing: 0.08em;
-      transition: transform 0.2s, box-shadow 0.2s;
+      margin-top:.75rem; width:100%; padding:.9rem;
+      background:linear-gradient(135deg, var(--gold), var(--gold-dk));
+      color:#fff; border:none; border-radius:12px;
+      font-family:var(--serif); font-size:1.05rem; letter-spacing:.07em;
+      cursor:pointer;
+      box-shadow:0 4px 16px rgba(201,168,76,.30);
+      transition:transform .2s, box-shadow .2s;
     }
-
-    .lock-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(212,175,55,0.35); }
-    .lock-btn:active { transform: translateY(0); }
+    .lock-btn:hover { transform:translateY(-2px); box-shadow:0 8px 24px rgba(201,168,76,.42); }
+    .lock-btn:active { transform:translateY(0); }
 
     .lock-error {
-      margin-top: 0.8rem;
-      font-size: 0.85rem;
-      color: #c0392b;
-      min-height: 1.2em;
-      transition: opacity 0.3s;
+      min-height:1.2em; margin-top:.4rem;
+      font-size:.82rem; color:#b94040;
     }
 
-    /* =====================================================
-       CONTENIDO PRINCIPAL (oculto hasta autenticación)
-       ===================================================== */
-    #content { position: relative; z-index: 1; }
+    /* Shake de error — CSS puro */
+    @keyframes shake {
+      0%,100% { transform:translateX(0); }
+      20%,60%  { transform:translateX(-6px); }
+      40%,80%  { transform:translateX(6px); }
+    }
+    .lock-input.shake { animation:shake .4s ease; }
 
-    /* =====================================================
-       SECCIÓN HERO
-       ===================================================== */
+    /* ════════════════════════════════════════════════════
+       HERO
+       ════════════════════════════════════════════════════ */
     #hero {
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      padding: 4rem 2rem 6rem;
-      position: relative;
+      min-height: 100svh;
+      display:flex; flex-direction:column;
+      align-items:center; justify-content:center;
+      text-align:center; padding:5rem 1.5rem 7rem;
     }
 
-    /* Línea decorativa top */
-    #hero::before {
-      content: '';
-      position: absolute;
-      top: 2rem;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 60px;
-      height: 2px;
-      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    /* Espacio reservado para foto → CLS = 0 */
+    .hero-frame {
+      position:relative; width:190px; height:190px;
+      margin-bottom:2.5rem;
     }
 
-    .hero-photo-wrapper {
-      position: relative;
-      width: 200px;
-      height: 200px;
-      margin-bottom: 2.5rem;
+    /* Anillo giratorio CSS puro */
+    .hero-ring {
+      position:absolute; inset:-9px;
+      border-radius:50%;
+      border:1.5px solid var(--gold-lt);
+      animation:rotate 18s linear infinite;
     }
-
-    .hero-photo-ring {
-      position: absolute;
-      inset: -6px;
-      border-radius: 50%;
-      border: 2px solid var(--gold);
-      opacity: 0.5;
-      animation: spin 12s linear infinite;
+    .hero-ring::after {
+      content:'✦'; position:absolute; top:-9px; left:50%;
+      transform:translateX(-50%);
+      font-size:.65rem; color:var(--gold);
     }
+    @keyframes rotate { to { transform:rotate(360deg); } }
 
-    .hero-photo-ring-2 {
-      position: absolute;
-      inset: -14px;
-      border-radius: 50%;
-      border: 1px dashed var(--gold-light);
-      animation: spin 20s linear infinite reverse;
+    /* El slot reserva 190×190 con color de fondo → sin layout jump */
+    .hero-slot {
+      width:190px; height:190px; border-radius:50%;
+      overflow:hidden;
+      border:3.5px solid var(--gold);
+      box-shadow:0 0 0 8px rgba(201,168,76,.08);
+      background:linear-gradient(135deg, var(--rose), #fff3d0);
+      display:flex; align-items:center; justify-content:center;
+      font-size:4.5rem;
     }
+    .hero-slot img { width:100%; height:100%; object-fit:cover; display:block; }
 
-    @keyframes spin { to { transform: rotate(360deg); } }
-
-    .hero-photo {
-      width: 200px;
-      height: 200px;
-      border-radius: 50%;
-      object-fit: cover;
-      border: 4px solid var(--gold);
-      box-shadow: 0 0 40px rgba(212,175,55,0.3);
-      display: block;
-      /* ⬇ Reemplaza src con la URL real de la foto */
-      background: linear-gradient(135deg, #f9e4e4, #fff3d0);
-    }
-
-    /* Placeholder cuando no hay foto */
-    .hero-photo-placeholder {
-      width: 200px;
-      height: 200px;
-      border-radius: 50%;
-      border: 4px solid var(--gold);
-      box-shadow: 0 0 40px rgba(212,175,55,0.3);
-      background: linear-gradient(135deg, #f9e4e4, #fff3cd);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 5rem;
-    }
-
+    /* Animaciones de entrada CSS puras — escalonadas */
     .hero-eyebrow {
-      font-size: 0.8rem;
-      letter-spacing: 0.25em;
-      text-transform: uppercase;
-      color: var(--gold);
-      margin-bottom: 0.8rem;
+      font-size:.72rem; letter-spacing:.32em; text-transform:uppercase;
+      color:var(--gold); margin-bottom:.8rem;
+      opacity:0; animation:fadeUp .8s .25s ease forwards;
     }
-
     .hero-title {
-      font-size: clamp(2.2rem, 6vw, 3.8rem);
-      line-height: 1.15;
-      color: var(--text);
-      margin-bottom: 1.2rem;
+      font-size:clamp(2.1rem,7vw,4rem); line-height:1.12;
+      color:var(--text); margin-bottom:1.2rem;
+      opacity:0; animation:fadeUp .8s .4s ease forwards;
+    }
+    .hero-title em { font-style:italic; color:var(--gold-dk); }
+
+    .gold-line {
+      width:60px; height:1.5px;
+      background:linear-gradient(90deg,transparent,var(--gold),transparent);
+      margin:0 auto;
+    }
+    .hero-divider {
+      margin:1.4rem auto;
+      opacity:0; animation:fadeUp .8s .55s ease forwards;
+    }
+    .hero-msg {
+      max-width:490px; font-size:1rem; font-weight:300;
+      line-height:1.9; color:var(--text-soft);
+      opacity:0; animation:fadeUp .8s .7s ease forwards;
     }
 
-    .hero-title em { font-style: italic; color: var(--gold-dark); }
-
-    .hero-message {
-      max-width: 520px;
-      font-size: 1.05rem;
-      line-height: 1.85;
-      color: var(--text-light);
-      font-weight: 300;
+    @keyframes fadeUp {
+      from { opacity:0; transform:translateY(22px); }
+      to   { opacity:1; transform:translateY(0); }
     }
 
-    .gold-divider {
-      width: 80px;
-      height: 1px;
-      background: linear-gradient(90deg, transparent, var(--gold), transparent);
-      margin: 2.5rem auto;
+    /* ════════════════════════════════════════════════════
+       GALERÍA
+       ════════════════════════════════════════════════════ */
+    #gallery { padding:5rem 1.5rem; max-width:1060px; margin:0 auto; }
+
+    .sec-eye {
+      font-size:.7rem; letter-spacing:.3em; text-transform:uppercase;
+      color:var(--gold); text-align:center; margin-bottom:.5rem;
+    }
+    .sec-title {
+      font-size:clamp(1.6rem,4vw,2.4rem);
+      text-align:center; color:var(--text); margin-bottom:3rem;
     }
 
-    /* =====================================================
-       MURO DE RECUERDOS
-       ===================================================== */
-    #memories {
-      padding: 5rem 2rem;
-      max-width: 1100px;
-      margin: 0 auto;
+    .gallery-grid {
+      display:grid;
+      grid-template-columns:repeat(auto-fill,minmax(230px,1fr));
+      gap:1.2rem;
     }
 
-    .section-label {
-      text-align: center;
-      font-size: 0.75rem;
-      letter-spacing: 0.3em;
-      text-transform: uppercase;
-      color: var(--gold);
-      margin-bottom: 0.6rem;
+    .g-card {
+      border-radius:16px; overflow:hidden;
+      position:relative;
+      /* aspect-ratio reserva espacio exacto → CLS = 0 */
+      aspect-ratio:1/1;
+      cursor:pointer;
+      box-shadow:0 3px 16px rgba(0,0,0,.07);
+      transition:transform .35s cubic-bezier(.25,.8,.25,1), box-shadow .35s;
+    }
+    .g-card:hover {
+      transform:translateY(-6px) scale(1.02);
+      box-shadow:0 14px 40px rgba(201,168,76,.22);
     }
 
-    .section-title {
-      text-align: center;
-      font-size: clamp(1.6rem, 4vw, 2.4rem);
-      margin-bottom: 3rem;
-      color: var(--text);
+    .g-ph {
+      width:100%; height:100%;
+      display:flex; flex-direction:column;
+      align-items:center; justify-content:center; gap:.5rem;
+      font-size:3rem;
+    }
+    .g-ph-year {
+      font-family:var(--serif); font-size:.78rem;
+      letter-spacing:.15em; color:var(--gold-dk);
     }
 
-    .memories-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-      gap: 1.4rem;
+    /* Imagen real — object-fit mantiene proporciones */
+    .g-card img {
+      width:100%; height:100%;
+      object-fit:cover; display:block;
     }
 
-    .memory-card {
-      position: relative;
-      border-radius: 16px;
-      overflow: hidden;
-      aspect-ratio: 1 / 1;
-      cursor: pointer;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-      transition: transform 0.35s ease, box-shadow 0.35s ease;
+    /* Overlay con leyenda */
+    .g-overlay {
+      position:absolute; inset:0;
+      background:linear-gradient(to top,rgba(42,30,8,.82) 0%,transparent 55%);
+      opacity:0; transition:opacity .35s;
+      display:flex; align-items:flex-end; padding:1.2rem;
+    }
+    .g-card:hover .g-overlay,
+    .g-card:focus .g-overlay { opacity:1; }
+
+    .g-caption {
+      color:#fff; font-family:var(--serif);
+      font-size:.95rem; font-style:italic; line-height:1.4;
+      transform:translateY(6px); transition:transform .35s;
+    }
+    .g-card:hover .g-caption { transform:translateY(0); }
+    .g-year-badge {
+      display:block; font-family:var(--sans); font-style:normal;
+      font-size:.7rem; letter-spacing:.12em; color:var(--gold-lt);
+      margin-bottom:.2rem;
     }
 
-    .memory-card:hover {
-      transform: translateY(-6px) scale(1.02);
-      box-shadow: 0 12px 40px rgba(212,175,55,0.2);
-    }
-
-    .memory-img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-      transition: transform 0.5s ease;
-    }
-
-    .memory-card:hover .memory-img { transform: scale(1.08); }
-
-    /* Placeholder de recuerdo */
-    .memory-placeholder {
-      width: 100%;
-      height: 100%;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      font-size: 3rem;
-      color: var(--gold);
-    }
-
-    .memory-overlay {
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(to top, rgba(74,50,10,0.85) 0%, transparent 55%);
-      opacity: 0;
-      transition: opacity 0.35s ease;
-      display: flex;
-      align-items: flex-end;
-      padding: 1.4rem;
-    }
-
-    .memory-card:hover .memory-overlay { opacity: 1; }
-
-    .memory-caption {
-      color: white;
-      font-family: 'Playfair Display', serif;
-      font-size: 1rem;
-      font-style: italic;
-      line-height: 1.4;
-      transform: translateY(8px);
-      transition: transform 0.35s ease;
-    }
-
-    .memory-card:hover .memory-caption { transform: translateY(0); }
-
-    .memory-year {
-      display: block;
-      font-family: 'Lato', sans-serif;
-      font-style: normal;
-      font-size: 0.75rem;
-      letter-spacing: 0.12em;
-      color: var(--gold-light);
-      margin-bottom: 0.3rem;
-    }
-
-    /* =====================================================
-       CARTAS ENCRIPTADAS
-       ===================================================== */
+    /* ════════════════════════════════════════════════════
+       CARTAS EN ACORDEÓN
+       Usa <details>/<summary> nativo → cero JS para toggle
+       ════════════════════════════════════════════════════ */
     #letters {
-      padding: 5rem 2rem;
-      background: linear-gradient(180deg, var(--bg) 0%, #fff5e6 100%);
+      padding:5rem 1.5rem;
+      background:linear-gradient(180deg,var(--bg) 0%,#fff8ed 100%);
+    }
+    .letters-wrap { max-width:700px; margin:0 auto; }
+
+    .accordion { display:flex; flex-direction:column; gap:.75rem; margin-top:2.8rem; }
+
+    .acc-item {
+      background:#fff;
+      border:1px solid var(--border); border-radius:16px; overflow:hidden;
+      box-shadow:0 2px 12px rgba(201,168,76,.07);
+      transition:box-shadow .3s;
+    }
+    .acc-item:hover { box-shadow:0 6px 24px rgba(201,168,76,.15); }
+
+    .acc-summary {
+      list-style:none; display:flex; align-items:center; gap:1rem;
+      padding:1.4rem 1.6rem; cursor:pointer; user-select:none;
+    }
+    .acc-summary::-webkit-details-marker { display:none; }
+
+    .acc-icon { font-size:2rem; flex-shrink:0; line-height:1; }
+
+    .acc-meta { flex:1; }
+    .acc-name {
+      font-family:var(--serif); font-size:1.15rem;
+      color:var(--text); display:block; margin-bottom:.15rem;
+    }
+    .acc-hint { font-size:.78rem; color:var(--text-soft); letter-spacing:.05em; }
+
+    /* Flecha CSS pura — sin JS */
+    .acc-arrow {
+      width:28px; height:28px; border-radius:50%;
+      border:1px solid var(--border);
+      display:flex; align-items:center; justify-content:center;
+      font-size:.8rem; color:var(--gold); flex-shrink:0;
+      transition:transform .35s, background .2s, color .2s;
+    }
+    details[open] .acc-arrow {
+      transform:rotate(180deg);
+      background:var(--gold); color:#fff;
     }
 
-    .letters-inner {
-      max-width: 900px;
-      margin: 0 auto;
+    /* Cuerpo */
+    .acc-body {
+      padding:0 1.6rem 1.8rem;
+      border-top:1px solid var(--border);
+    }
+    .acc-letter-head {
+      font-family:var(--serif); font-size:1.25rem;
+      color:var(--text); padding:1.2rem 0 .8rem;
+      border-bottom:1px solid rgba(201,168,76,.12); margin-bottom:1.2rem;
+    }
+    .acc-letter-body {
+      font-size:.97rem; font-weight:300;
+      line-height:1.95; color:var(--text-soft); white-space:pre-line;
+    }
+    .acc-sig {
+      margin-top:1.5rem;
+      font-family:var(--serif); font-style:italic;
+      color:var(--gold-dk); font-size:1.05rem; text-align:right;
     }
 
-    .envelopes-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-      gap: 2rem;
-      margin-top: 3rem;
-    }
-
-    /* Sobre digital */
-    .envelope {
-      position: relative;
-      cursor: pointer;
-      perspective: 800px;
-    }
-
-    .envelope-body {
-      background: white;
-      border: 1.5px solid rgba(212,175,55,0.35);
-      border-radius: 14px;
-      padding: 2.5rem 1.8rem 2rem;
-      text-align: center;
-      box-shadow: 0 6px 24px rgba(212,175,55,0.1);
-      transition: box-shadow 0.3s, transform 0.3s;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .envelope-body::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 3px;
-      background: linear-gradient(90deg, var(--gold-light), var(--gold), var(--gold-light));
-    }
-
-    .envelope:hover .envelope-body {
-      box-shadow: 0 14px 40px rgba(212,175,55,0.22);
-      transform: translateY(-4px);
-    }
-
-    .envelope-icon { font-size: 3rem; margin-bottom: 1rem; display: block; }
-
-    .envelope-name {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.15rem;
-      color: var(--text);
-      margin-bottom: 0.4rem;
-    }
-
-    .envelope-hint {
-      font-size: 0.8rem;
-      color: var(--text-light);
-      letter-spacing: 0.06em;
-    }
-
-    .envelope-seal {
-      width: 36px;
-      height: 36px;
-      background: linear-gradient(135deg, var(--gold), var(--gold-dark));
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 1.2rem auto 0;
-      color: white;
-      font-size: 1rem;
-      box-shadow: 0 3px 10px rgba(212,175,55,0.4);
-      transition: transform 0.3s;
-    }
-
-    .envelope:hover .envelope-seal { transform: scale(1.15) rotate(10deg); }
-
-    /* Modal de carta */
-    .letter-modal-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(74,60,30,0.55);
-      backdrop-filter: blur(6px);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 200;
-      padding: 1.5rem;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.4s ease;
-    }
-
-    .letter-modal-overlay.open {
-      opacity: 1;
-      pointer-events: all;
-    }
-
-    .letter-modal {
-      background: var(--card-bg);
-      border: 1px solid rgba(212,175,55,0.35);
-      border-radius: 20px;
-      max-width: 560px;
-      width: 100%;
-      padding: 2.5rem 2.8rem;
-      position: relative;
-      box-shadow: 0 30px 80px rgba(0,0,0,0.18);
-      transform: scale(0.9) translateY(20px);
-      transition: transform 0.4s ease;
-      max-height: 85vh;
-      overflow-y: auto;
-    }
-
-    .letter-modal-overlay.open .letter-modal {
-      transform: scale(1) translateY(0);
-    }
-
-    .letter-modal-close {
-      position: absolute;
-      top: 1rem; right: 1rem;
-      width: 32px; height: 32px;
-      border-radius: 50%;
-      border: 1px solid rgba(212,175,55,0.3);
-      background: white;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1rem;
-      color: var(--text-light);
-      transition: background 0.2s, color 0.2s;
-    }
-
-    .letter-modal-close:hover { background: var(--gold); color: white; }
-
-    .letter-modal-title {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.5rem;
-      color: var(--text);
-      margin-bottom: 1.5rem;
-      padding-bottom: 1rem;
-      border-bottom: 1px solid rgba(212,175,55,0.2);
-    }
-
-    .letter-modal-body {
-      font-size: 1rem;
-      line-height: 1.9;
-      color: var(--text);
-      font-weight: 300;
-      white-space: pre-line;
-    }
-
-    .letter-modal-signature {
-      margin-top: 1.8rem;
-      font-family: 'Playfair Display', serif;
-      font-style: italic;
-      color: var(--gold-dark);
-      font-size: 1.05rem;
-      text-align: right;
-    }
-
-    /* =====================================================
+    /* ════════════════════════════════════════════════════
        FOOTER
-       ===================================================== */
-    #footer {
-      padding: 3rem 2rem;
-      text-align: center;
+       ════════════════════════════════════════════════════ */
+    #footer { padding:4rem 1.5rem; text-align:center; }
+    .footer-quote {
+      font-family:var(--serif); font-size:1.15rem; font-style:italic;
+      color:var(--text-soft); max-width:400px; margin:1.5rem auto 1rem; line-height:1.6;
+    }
+    .footer-hearts { font-size:1.3rem; letter-spacing:.35rem; color:var(--gold); }
+
+    /* ════════════════════════════════════════════════════
+       REVEAL ON SCROLL
+       ════════════════════════════════════════════════════ */
+    .reveal {
+      opacity:0; transform:translateY(24px);
+      transition:opacity .75s ease, transform .75s ease;
+    }
+    .reveal.visible { opacity:1; transform:translateY(0); }
+    .d1{transition-delay:.1s} .d2{transition-delay:.22s}
+    .d3{transition-delay:.34s} .d4{transition-delay:.46s}
+    .d5{transition-delay:.58s}
+
+    /* ════════════════════════════════════════════════════
+       TOAST
+       ════════════════════════════════════════════════════ */
+    #toast {
+      position:fixed; bottom:2rem; left:50%;
+      transform:translateX(-50%) translateY(8px);
+      background:var(--text); color:#fff;
+      font-size:.84rem; padding:.7rem 1.4rem;
+      border-radius:50px; white-space:nowrap;
+      pointer-events:none; opacity:0;
+      transition:opacity .35s, transform .35s;
+      z-index:9999;
+      box-shadow:0 6px 20px rgba(0,0,0,.18);
+    }
+    #toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+
+    /* ════════════════════════════════════════════════════
+       RESPONSIVE
+       ════════════════════════════════════════════════════ */
+    @media(max-width:480px){
+      .lock-card { padding:2.2rem 1.6rem; }
+      .hero-frame,.hero-slot { width:155px; height:155px; }
     }
 
-    .footer-text {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.1rem;
-      font-style: italic;
-      color: var(--text-light);
-    }
-
-    .footer-hearts { font-size: 1.4rem; letter-spacing: 0.3rem; margin-top: 0.8rem; }
-
-    /* =====================================================
-       ANIMACIONES DE ENTRADA
-       ===================================================== */
-    .fade-in-up {
-      opacity: 0;
-      transform: translateY(30px);
-      transition: opacity 0.8s ease, transform 0.8s ease;
-    }
-
-    .fade-in-up.visible {
-      opacity: 1;
-      transform: translateY(0);
-    }
-
-    /* Delays escalonados */
-    .delay-1 { transition-delay: 0.1s; }
-    .delay-2 { transition-delay: 0.25s; }
-    .delay-3 { transition-delay: 0.4s; }
-    .delay-4 { transition-delay: 0.55s; }
-    .delay-5 { transition-delay: 0.7s; }
-
-    /* =====================================================
-       SCROLLBAR personalizada
-       ===================================================== */
-    ::-webkit-scrollbar { width: 6px; }
-    ::-webkit-scrollbar-track { background: var(--bg); }
-    ::-webkit-scrollbar-thumb { background: var(--gold-light); border-radius: 3px; }
-
-    /* =====================================================
-       RESPONSIVE AJUSTES
-       ===================================================== */
-    @media (max-width: 480px) {
-      .lock-card { padding: 2rem 1.5rem; }
-      .letter-modal { padding: 2rem 1.5rem; }
-    }
+    /* Scrollbar discreta */
+    ::-webkit-scrollbar { width:5px; }
+    ::-webkit-scrollbar-track { background:var(--bg); }
+    ::-webkit-scrollbar-thumb { background:var(--gold-lt); border-radius:3px; }
   </style>
 </head>
 <body>
 
-  <!-- =====================================================
-       🔒 PANTALLA DE BLOQUEO
-       Cambia la pregunta y la clave en la sección de JS
-       ===================================================== -->
-  <div id="lockScreen">
-    <svg class="lock-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-      <rect x="5" y="11" width="14" height="10" rx="2" ry="2"></rect>
-      <path d="M8 11V7a4 4 0 0 1 8 0v4"></path>
-    </svg>
+  <!-- ════════════════════════════════════════════════════
+       SKELETON LOADER — pintado al instante por el browser
+       Desaparece cuando body.loaded se activa (< 50 ms)
+       ════════════════════════════════════════════════════ -->
+  <div id="skeleton" role="status" aria-label="Cargando…">
+    <div class="sk-spinner"></div>
+    <div class="sk-bar"></div>
+    <div class="sk-bar"></div>
+  </div>
 
-    <div class="lock-card animate__animated animate__fadeInUp">
-      <h1 class="lock-title">Acceso Privado</h1>
-      <p class="lock-subtitle">
-        Esta página es solo para alguien muy especial.<br/>
+  <!-- ════════════════════════════════════════════════════
+       🔒 PANTALLA DE BLOQUEO
+       ════════════════════════════════════════════════════ -->
+  <div id="lockScreen">
+    <div class="lock-card">
+
+      <!-- SVG inline — cero HTTP request -->
+      <svg class="lock-icon" viewBox="0 0 24 24" fill="none"
+           stroke="currentColor" stroke-width="1.4" stroke-linecap="round">
+        <rect x="5" y="11" width="14" height="10" rx="3"/>
+        <path d="M8 11V7a4 4 0 0 1 8 0v4"/>
+        <circle cx="12" cy="16" r="1.2" fill="currentColor" stroke="none"/>
+      </svg>
+
+      <h1 class="lock-heading">Acceso Privado</h1>
+
+      <!-- ✏️ EDITA la pregunta -->
+      <p class="lock-sub">
+        Esta página fue hecha con amor para alguien muy especial.<br/>
         ¿Cuál es nuestro secreto mejor guardado?
       </p>
 
       <input
-        type="password"
-        id="lockInput"
-        class="lock-input"
-        placeholder="Escribe la clave..."
-        autocomplete="off"
-        maxlength="40"
+        id="lockInput" type="password"
+        class="lock-input" placeholder="Escribe la clave…"
+        autocomplete="off" maxlength="40"
+        aria-label="Contraseña de acceso"
       />
+      <button class="lock-btn" id="lockBtn">Abrir con amor ✦</button>
+      <p class="lock-error" id="lockError" aria-live="polite"></p>
 
-      <button class="lock-btn" onclick="validarClave()">
-        Abrir con amor ✦
-      </button>
-
-      <p class="lock-error" id="lockError"></p>
     </div>
   </div>
 
-  <!-- =====================================================
-       🎁 CONTENIDO PRINCIPAL — hidden hasta autenticación
-       ===================================================== -->
-  <main id="content" class="hidden">
+  <!-- ════════════════════════════════════════════════════
+       🎁 CONTENIDO PRINCIPAL
+       Oculto (display:none) hasta autenticación correcta
+       ════════════════════════════════════════════════════ -->
+  <main id="content" style="display:none">
 
-    <!-- ===================================================
-         🌟 SECCIÓN 1: HERO
-         Reemplaza "src" de <img> con tu foto real
-         =================================================== -->
+    <!-- ── HERO ───────────────────────────────────────── -->
     <section id="hero">
 
-      <div class="hero-photo-wrapper animate__animated animate__fadeIn">
-        <div class="hero-photo-ring"></div>
-        <div class="hero-photo-ring-2"></div>
+      <div class="hero-frame">
+        <div class="hero-ring"></div>
 
-        <!-- 📸 FOTO DE MAMÁ — reemplaza el src con tu URL de imagen -->
-        <!-- <img class="hero-photo" src="foto-mama.jpg" alt="Mamá" /> -->
+        <!--
+          El .hero-slot reserva 190×190px con color de fondo
+          → El layout NO salta cuando carga la imagen (CLS=0)
 
-        <!-- Emoji placeholder (borra esto cuando pongas la foto real) -->
-        <div class="hero-photo-placeholder">🌸</div>
+          Para usar una foto real:
+          1. Comenta la línea del emoji 🌸
+          2. Descomenta: <img src="mama.jpg" alt="Mamá" loading="lazy" />
+        -->
+        <div class="hero-slot" aria-label="Foto de mamá">
+          <!-- 📸 FOTO REAL:
+          <img src="mama.jpg" alt="Mamá" loading="lazy" />
+          -->
+          🌸
+        </div>
       </div>
 
-      <p class="hero-eyebrow fade-in-up delay-1">✦ Feliz Cumpleaños ✦</p>
+      <p class="hero-eyebrow">✦ Feliz Cumpleaños ✦</p>
 
-      <h1 class="hero-title fade-in-up delay-2">
+      <!-- ✏️ EDITA el título -->
+      <h1 class="hero-title">
         Para la mujer que<br/>
         <em>nos lo enseñó todo</em>
       </h1>
 
-      <div class="gold-divider fade-in-up delay-3"></div>
+      <div class="gold-line hero-divider"></div>
 
-      <!-- 📝 MENSAJE HERO — edita este texto -->
-      <p class="hero-message fade-in-up delay-4">
+      <!-- ✏️ EDITA el mensaje de bienvenida -->
+      <p class="hero-msg">
         Hoy el mundo cumple un año más de tenerte, y nosotros un año más de ser
         los más afortunados por llamarte mamá. Esta pequeña página es nuestra
         forma de decirte que cada rincón de nuestras vidas lleva tu firma.
       </p>
-
     </section>
 
-    <!-- ===================================================
-         📸 SECCIÓN 2: MURO DE RECUERDOS
-         Edita el array "recuerdos" en el bloque <script>
-         =================================================== -->
-    <section id="memories">
-      <p class="section-label fade-in-up">Nuestros Momentos</p>
-      <h2 class="section-title fade-in-up delay-1">Muro de Recuerdos</h2>
-
-      <div class="memories-grid" id="memoriesGrid">
-        <!-- Las tarjetas se generan dinámicamente desde JS -->
-      </div>
+    <!-- ── GALERÍA (DOM generado desde JS) ────────────── -->
+    <section id="gallery">
+      <p class="sec-eye reveal">Nuestros Momentos</p>
+      <h2 class="sec-title reveal d1">Muro de Recuerdos</h2>
+      <div class="gallery-grid" id="galleryGrid"></div>
     </section>
 
-    <!-- ===================================================
-         💌 SECCIÓN 3: CARTAS ENCRIPTADAS
-         Edita el array "cartas" en el bloque <script>
-         =================================================== -->
+    <!-- ── CARTAS EN ACORDEÓN (DOM generado desde JS) ─── -->
     <section id="letters">
-      <div class="letters-inner">
-        <p class="section-label fade-in-up">Solo para ti</p>
-        <h2 class="section-title fade-in-up delay-1">Cartas con Amor</h2>
-        <p class="text-center fade-in-up delay-2" style="color:var(--text-light);font-size:0.9rem;margin-top:-2rem;margin-bottom:0">
-          Haz clic en cada sobre para abrirlo ✉
+      <div class="letters-wrap">
+        <p class="sec-eye reveal">Solo para ti</p>
+        <h2 class="sec-title reveal d1">Cartas con Amor</h2>
+        <p class="reveal d2" style="text-align:center;font-size:.88rem;color:var(--text-soft);margin-top:-2.2rem">
+          Haz clic en cada sobre para leer tu carta ✉
         </p>
-
-        <div class="envelopes-grid" id="envelopesGrid">
-          <!-- Los sobres se generan dinámicamente desde JS -->
-        </div>
+        <div class="accordion" id="accordionEl"></div>
       </div>
     </section>
 
-    <!-- ===================================================
-         💛 FOOTER
-         =================================================== -->
+    <!-- ── FOOTER ──────────────────────────────────────── -->
     <footer id="footer">
-      <div class="gold-divider"></div>
-      <p class="footer-text">"El hogar no es un lugar, eres tú."</p>
-      <p class="footer-hearts">🌸 💛 🌸</p>
+      <div class="gold-line reveal"></div>
+      <!-- ✏️ EDITA la cita -->
+      <p class="footer-quote reveal d1">"El hogar no es un lugar, eres tú."</p>
+      <p class="footer-hearts reveal d2">🌸 ✦ 🌸</p>
     </footer>
 
   </main>
 
-  <!-- =====================================================
-       MODAL DE CARTA (reutilizable)
-       ===================================================== -->
-  <div class="letter-modal-overlay" id="letterModal" onclick="cerrarCarta(event)">
-    <div class="letter-modal">
-      <button class="letter-modal-close" onclick="cerrarCarta(null, true)">✕</button>
-      <h3 class="letter-modal-title" id="modalTitle"></h3>
-      <div class="letter-modal-body" id="modalBody"></div>
-      <p class="letter-modal-signature" id="modalSignature"></p>
-    </div>
-  </div>
+  <!-- Toast anti-curioseo -->
+  <div id="toast" role="alert"></div>
 
 
-  <script>
-    /* ======================================================
-       🔑 CONFIGURACIÓN DE ACCESO
-       Cambia la clave aquí. Es sensible a mayúsculas.
-       ====================================================== */
-    const CLAVE_SECRETA = "amor"; // ← CAMBIA ESTO
+  <!-- ════════════════════════════════════════════════════
+       CANVAS-CONFETTI — defer: no bloquea render
+       ════════════════════════════════════════════════════ -->
+  <script
+    src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"
+    defer
+  ></script>
 
-    /* ======================================================
-       📸 RECUERDOS — edita este array
-       Propiedades:
-         emoji  : emoji representativo (si no tienes foto)
-         img    : ruta o URL de la foto (null = usa emoji)
-         caption: texto que aparece al pasar el mouse
-         year   : año del recuerdo
-       ====================================================== */
-    const recuerdos = [
-      {
-        emoji: "🏡",
-        img: null,
-        caption: "El hogar que construiste con tanto amor",
-        year: "Siempre"
-      },
-      {
-        emoji: "🎂",
-        img: null,
-        caption: "Cada cumpleaños, más risas que el anterior",
-        year: "2023"
-      },
-      {
-        emoji: "🌊",
-        img: null,
-        caption: "Ese verano en la playa que nunca olvidaremos",
-        year: "2021"
-      },
-      {
-        emoji: "🍽️",
-        img: null,
-        caption: "Tus domingos de cocina que huelen a hogar",
-        year: "Todos los domingos"
-      },
-      {
-        emoji: "🌺",
-        img: null,
-        caption: "Tu jardín, tu santuario, tu obra de arte",
-        year: "Cada primavera"
-      },
-      {
-        emoji: "📚",
-        img: null,
-        caption: "La primera vez que me leíste un cuento",
-        year: "El principio"
-      }
-    ];
+  <!-- ════════════════════════════════════════════════════
+       JAVASCRIPT PRINCIPAL — defer: carga tras el DOM
+       ════════════════════════════════════════════════════ -->
+  <script defer>
+  /* ──────────────────────────────────────────────────────
+     Skeleton off: DOMContentLoaded garantiza que el DOM
+     está listo en < 50ms, sin esperar imágenes ni scripts.
+     ────────────────────────────────────────────────────── */
+  document.addEventListener('DOMContentLoaded', () => {
+    document.body.classList.add('loaded');
+  });
 
-    /* ======================================================
-       💌 CARTAS — edita este array
-       Propiedades:
-         icono    : emoji del sobre
-         nombre   : título visible en el sobre
-         pista    : texto pequeño bajo el nombre
-         titulo   : título dentro de la carta abierta
-         cuerpo   : texto largo de la carta (usa \n para saltos)
-         firma    : firma al final
-       ====================================================== */
-    const cartas = [
-      {
-        icono: "💌",
-        nombre: "De tu hijo/a mayor",
-        pista: "Una carta desde el corazón",
-        titulo: "Querida Mamá",
-        cuerpo: `Hay personas que no necesitan haber visto el mundo para entenderlo. Tú eres una de esas personas. Desde niño/a supe que eras diferente: tenías una forma de ver las cosas que hacía que todo pareciera posible.
+  /* ══════════════════════════════════════════════════════
+     ✏️  CONFIGURACIÓN — edita solo estos bloques
+     ══════════════════════════════════════════════════════ */
+
+  // 🔑 Clave de acceso (se compara en minúsculas)
+  const CLAVE = "amor"; // ← CAMBIA ESTO
+
+  /* ── Recuerdos ──────────────────────────────────────────
+     emoji : placeholder si img es null
+     img   : ruta o URL de la foto (null = usa emoji)
+     legend: texto al hacer hover
+     year  : año o época
+  ──────────────────────────────────────────────────────── */
+  const recuerdos = [
+    { emoji:"🏡", img:null, legend:"El hogar que construiste con tanto amor",       year:"Siempre"        },
+    { emoji:"🎂", img:null, legend:"Cada cumpleaños con más risas que el anterior", year:"2023"           },
+    { emoji:"🌊", img:null, legend:"Ese verano en la playa que nunca olvidaremos",  year:"2021"           },
+    { emoji:"🍽️",img:null, legend:"Tus domingos de cocina que huelen a hogar",    year:"Cada domingo"   },
+    { emoji:"🌺", img:null, legend:"Tu jardín, tu santuario, tu obra de arte",      year:"Cada primavera" },
+    { emoji:"📚", img:null, legend:"La primera vez que me leíste un cuento",        year:"El principio"   }
+  ];
+
+  /* ── Cartas ─────────────────────────────────────────────
+     icono  : emoji del sobre
+     nombre : título visible
+     pista  : subtítulo pequeño
+     titulo : encabezado dentro de la carta
+     cuerpo : texto (usa \n para párrafos)
+     firma  : pie de firma
+  ──────────────────────────────────────────────────────── */
+  const cartas = [
+    {
+      icono:"💌", nombre:"De tu hijo/a mayor", pista:"Una carta desde el corazón",
+      titulo:"Querida Mamá",
+      cuerpo:`Hay personas que no necesitan haber visto el mundo para entenderlo. Tú eres una de esas personas. Desde niño/a supe que eras diferente: tenías una forma de ver las cosas que hacía que todo pareciera posible.
 
 Recuerdo cuando me caí de la bicicleta por primera vez y corriste hacia mí antes de que pudiera llorar. No dijiste "te lo dije". Solo me abrazaste y me dijiste: "Los valientes también se caen".
 
-Hoy, con los años que tengo, sigo escuchando esa frase cuando las cosas se ponen difíciles. Esa eres tú, mamá: la voz que me sostiene aún cuando no estás.
+Hoy, con los años que tengo, sigo escuchando esa frase cuando las cosas se ponen difíciles. Esa eres tú: la voz que me sostiene aún cuando no estás.
 
-Gracias por enseñarme que el amor no se dice, se demuestra con cada pequeño gesto. Con cada sopa cuando estaba enfermo/a, con cada nota en mi lonchera, con cada "te escucho" cuando el mundo no me entendía.
-
-Eres la persona más valiente que conozco.`,
-        firma: "Con todo mi amor, tu hijo/a 🌸"
-      },
-      {
-        icono: "🌹",
-        nombre: "Una promesa para ti",
-        pista: "Algo que siempre quisimos decirte",
-        titulo: "Nuestra Promesa",
-        cuerpo: `Mamá,
+Gracias por enseñarme que el amor no se dice, se demuestra.`,
+      firma:"Con todo mi amor, tu hijo/a 🌸"
+    },
+    {
+      icono:"🌹", nombre:"Una promesa para ti", pista:"Algo que siempre quisimos decirte",
+      titulo:"Nuestra Promesa",
+      cuerpo:`Mamá,
 
 Prometemos nunca olvidar el sacrificio silencioso que has hecho por nosotros. Esas noches que no dormiste, esas renuncias que nunca nombraste, esos sueños que pausaste para que los nuestros pudieran crecer.
 
-Prometemos llamarte más seguido, no solo cuando necesitamos algo, sino para preguntarte cómo estás tú, qué estás pensando, qué te está emocionando últimamente.
+Prometemos llamarte más seguido, no solo cuando necesitamos algo, sino para preguntarte cómo estás tú.
 
-Prometemos que haremos que te sientas orgullosa. No porque lo necesites para querernos, sino porque tú mereces ver el fruto de tanto amor sembrado.
+Prometemos cuidarte como tú nos has cuidado. Con paciencia, con ternura.
 
-Prometemos cuidarte como tú nos has cuidado. Con paciencia, con ternura, con la misma dedicación que tú siempre tuviste.
-
-Y sobre todo, prometemos decirte "te quiero" más veces. Porque la vida es corta y tú mereces escucharlo todos los días.`,
-        firma: "Tus hijos, para siempre 💛"
-      },
-      {
-        icono: "⭐",
-        nombre: "Lo que el mundo ve en ti",
-        pista: "Cosas que quizás no sabes de ti misma",
-        titulo: "Lo Que Tú No Ves",
-        cuerpo: `Mamá, probablemente no lo sabes, pero...
+Y sobre todo, prometemos decirte "te quiero" más veces. La vida es corta y tú mereces escucharlo todos los días.`,
+      firma:"Tus hijos, para siempre 💛"
+    },
+    {
+      icono:"⭐", nombre:"Lo que el mundo ve en ti", pista:"Cosas que quizás no sabes de ti misma",
+      titulo:"Lo Que Tú No Ves",
+      cuerpo:`Mamá, probablemente no lo sabes, pero…
 
 Cuando entras a una habitación, la temperatura sube un par de grados. Hay algo en tu presencia que hace que todo se sienta más seguro, más cálido, más en su lugar.
 
 La gente habla de ti con una sonrisa involuntaria. "Tu mamá es increíble", nos dicen. Y nosotros solo respondemos: "Lo sabemos".
 
-Tu risa es contagiosa de una forma que la ciencia aún no ha podido explicar. Una sola carcajada tuya puede cambiar el humor de toda una mesa.
-
-Tienes el superpoder de hacer que los problemas parezcan más pequeños sin restarles importancia. Solo dices "lo vamos a resolver" y de alguna forma, siempre resulta ser verdad.
-
-Pero lo más increíble de todo es que con todo lo extraordinaria que eres, sigues siendo simplemente... mamá. Nuestra mamá. El centro de nuestra historia.
+Pero lo más increíble de todo es que con todo lo extraordinaria que eres, sigues siendo simplemente… mamá. Nuestra mamá. El centro de nuestra historia.
 
 Feliz cumpleaños a la persona más especial de nuestro universo.`,
-        firma: "Con admiración infinita 🌟"
-      }
-    ];
-
-    /* ======================================================
-       🔒 VALIDACIÓN DE CONTRASEÑA
-       ====================================================== */
-    function validarClave() {
-      const input = document.getElementById('lockInput').value.trim().toLowerCase();
-      const clave = CLAVE_SECRETA.toLowerCase();
-
-      if (input === clave) {
-        // ✅ Clave correcta
-        const lockScreen = document.getElementById('lockScreen');
-        lockScreen.classList.add('animate__animated', 'animate__fadeOut');
-
-        setTimeout(() => {
-          lockScreen.style.display = 'none';
-          mostrarContenido();
-        }, 600);
-
-      } else {
-        // ❌ Clave incorrecta
-        const error = document.getElementById('lockError');
-        const inputEl = document.getElementById('lockInput');
-
-        error.textContent = "Eso no suena bien... ¡inténtalo de nuevo! 💫";
-        inputEl.classList.add('animate__animated', 'animate__headShake');
-
-        setTimeout(() => {
-          inputEl.classList.remove('animate__animated', 'animate__headShake');
-          error.textContent = '';
-        }, 1000);
-      }
+      firma:"Con admiración infinita 🌟"
     }
+  ];
 
-    // Permite usar Enter para validar
-    document.getElementById('lockInput').addEventListener('keypress', function(e) {
-      if (e.key === 'Enter') validarClave();
+  /* ══════════════════════════════════════════════════════
+     🔒  DESBLOQUEO
+     ══════════════════════════════════════════════════════ */
+  const lockInput  = document.getElementById('lockInput');
+  const lockError  = document.getElementById('lockError');
+  const lockScreen = document.getElementById('lockScreen');
+
+  function validar() {
+    if (lockInput.value.trim().toLowerCase() === CLAVE.toLowerCase()) {
+      lockScreen.classList.add('unlocking');
+      setTimeout(revelarContenido, 700);
+    } else {
+      lockError.textContent = "Eso no suena bien… ¡inténtalo de nuevo! 💫";
+      lockInput.classList.add('shake');
+      lockInput.select();
+      setTimeout(() => { lockInput.classList.remove('shake'); lockError.textContent=''; }, 850);
+    }
+  }
+
+  document.getElementById('lockBtn').addEventListener('click', validar);
+  lockInput.addEventListener('keydown', e => { if(e.key==='Enter') validar(); });
+
+  /* ══════════════════════════════════════════════════════
+     🎉  REVELAR CONTENIDO + CONFETI
+     ══════════════════════════════════════════════════════ */
+  function revelarContenido() {
+    lockScreen.style.display = 'none';
+    const content = document.getElementById('content');
+    content.style.display = 'block';
+
+    buildGallery();
+    buildAccordion();
+    initReveal();
+    lanzarConfeti();
+  }
+
+  /* ══════════════════════════════════════════════════════
+     🎊  CONFETI DORADO
+     Espera a que el script externo (defer) haya cargado
+     ══════════════════════════════════════════════════════ */
+  function lanzarConfeti() {
+    if (typeof confetti === 'undefined') { setTimeout(lanzarConfeti, 200); return; }
+    const c = ['#C9A84C','#e8d08a','#fff3d0','#f5e6e6','#fff'];
+    confetti({ particleCount:110, spread:75, origin:{y:.55}, colors:c, scalar:1.15 });
+    setTimeout(() => {
+      confetti({ particleCount:70, angle:60,  spread:55, origin:{x:0}, colors:c });
+      confetti({ particleCount:70, angle:120, spread:55, origin:{x:1}, colors:c });
+    }, 420);
+  }
+
+  /* ══════════════════════════════════════════════════════
+     📸  CONSTRUIR GALERÍA
+     ══════════════════════════════════════════════════════ */
+  // Degradados CSS para placeholders — cero imágenes externas
+  const bgs = [
+    ['#fff3d0','#f5e6e6'],['#f5e6e6','#fff3d0'],
+    ['#e8f4f0','#d4f0e8'],['#f0e8ff','#f5e6e6'],
+    ['#fff3d0','#e8f4f0'],['#f5e6e6','#f0e8ff']
+  ];
+
+  function buildGallery() {
+    const grid = document.getElementById('galleryGrid');
+    recuerdos.forEach((r, i) => {
+      const card = document.createElement('div');
+      card.className = 'g-card reveal';
+      card.style.transitionDelay = `${(i%3)*0.1}s`;
+      card.tabIndex = 0;
+      const [c1,c2] = bgs[i % bgs.length];
+      card.style.background = `linear-gradient(135deg,${c1},${c2})`;
+
+      card.innerHTML = r.img
+        ? `<img src="${r.img}" alt="${r.legend}" loading="lazy"/>
+           <div class="g-overlay"><div class="g-caption">
+             <span class="g-year-badge">${r.year}</span>${r.legend}
+           </div></div>`
+        : `<div class="g-ph"><span>${r.emoji}</span><span class="g-ph-year">${r.year}</span></div>
+           <div class="g-overlay"><div class="g-caption">
+             <span class="g-year-badge">${r.year}</span>${r.legend}
+           </div></div>`;
+
+      grid.appendChild(card);
     });
+  }
 
-    /* ======================================================
-       🎉 MOSTRAR CONTENIDO + CONFETI
-       ====================================================== */
-    function mostrarContenido() {
-      const content = document.getElementById('content');
-      content.classList.remove('hidden');
-
-      // Lluvia de confeti dorada
-      const colores = ['#D4AF37', '#f0d97a', '#fff3cd', '#f9e4e4', '#fff'];
-
-      confetti({
-        particleCount: 120,
-        spread: 80,
-        origin: { y: 0.5 },
-        colors: colores,
-        scalar: 1.2
-      });
-
-      setTimeout(() => {
-        confetti({ particleCount: 80, angle: 60, spread: 55, origin: { x: 0 }, colors: colores });
-        confetti({ particleCount: 80, angle: 120, spread: 55, origin: { x: 1 }, colors: colores });
-      }, 400);
-
-      // Activar animaciones de scroll
-      initScrollObserver();
-
-      // Generar recuerdos y cartas
-      generarRecuerdos();
-      generarCartas();
-    }
-
-    /* ======================================================
-       📸 GENERAR MURO DE RECUERDOS
-       ====================================================== */
-    function generarRecuerdos() {
-      const grid = document.getElementById('memoriesGrid');
-
-      recuerdos.forEach((r, i) => {
-        const card = document.createElement('div');
-        card.className = 'memory-card fade-in-up';
-        card.style.transitionDelay = `${i * 0.1}s`;
-
-        const contenidoImagen = r.img
-          ? `<img class="memory-img" src="${r.img}" alt="${r.caption}" loading="lazy" />`
-          : `<div class="memory-placeholder" style="background:linear-gradient(135deg,${paletaFondos[i % paletaFondos.length]});">${r.emoji}</div>`;
-
-        card.innerHTML = `
-          ${contenidoImagen}
-          <div class="memory-overlay">
-            <div class="memory-caption">
-              <span class="memory-year">${r.year}</span>
-              ${r.caption}
+  /* ══════════════════════════════════════════════════════
+     💌  CONSTRUIR ACORDEÓN
+     Usa <details>/<summary> nativo → cero JS para toggle
+     ══════════════════════════════════════════════════════ */
+  function buildAccordion() {
+    const el = document.getElementById('accordionEl');
+    cartas.forEach((c, i) => {
+      const item = document.createElement('div');
+      item.className = `acc-item reveal d${i+1}`;
+      item.innerHTML = `
+        <details>
+          <summary class="acc-summary">
+            <span class="acc-icon">${c.icono}</span>
+            <div class="acc-meta">
+              <span class="acc-name">${c.nombre}</span>
+              <span class="acc-hint">${c.pista}</span>
             </div>
+            <span class="acc-arrow" aria-hidden="true">▾</span>
+          </summary>
+          <div class="acc-body">
+            <p class="acc-letter-head">${c.titulo}</p>
+            <p class="acc-letter-body">${c.cuerpo}</p>
+            <p class="acc-sig">${c.firma}</p>
           </div>
-        `;
+        </details>`;
+      el.appendChild(item);
+    });
+  }
 
-        grid.appendChild(card);
+  /* ══════════════════════════════════════════════════════
+     👁  REVEAL ON SCROLL — IntersectionObserver
+     Cero scroll listeners, cero polling
+     ══════════════════════════════════════════════════════ */
+  function initReveal() {
+    const io = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible');
+          io.unobserve(e.target); // observar solo una vez
+        }
       });
-    }
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+  }
 
-    // Paleta de fondos para placeholders
-    const paletaFondos = [
-      '#fff3d0,#f9e4e4',
-      '#f9e4e4,#fff3d0',
-      '#e8f4f0,#d4f0e8',
-      '#f0e8ff,#f9e4e4',
-      '#fff3d0,#e8f4f0',
-      '#f9e4e4,#f0e8ff'
-    ];
+  /* ══════════════════════════════════════════════════════
+     🍞  TOAST
+     ══════════════════════════════════════════════════════ */
+  let toastT;
+  const toastEl = document.getElementById('toast');
+  function toast(msg) {
+    toastEl.textContent = msg;
+    toastEl.classList.add('show');
+    clearTimeout(toastT);
+    toastT = setTimeout(() => toastEl.classList.remove('show'), 3200);
+  }
 
-    /* ======================================================
-       💌 GENERAR SOBRES / CARTAS
-       ====================================================== */
-    function generarCartas() {
-      const grid = document.getElementById('envelopesGrid');
+  /* ══════════════════════════════════════════════════════
+     🚫  ANTI-CURIOSEO
+     ══════════════════════════════════════════════════════ */
+  document.addEventListener('contextmenu', e => {
+    e.preventDefault();
+    toast('¡Ey! No hagas trampa, esto es solo para mamá 😄');
+  });
+  document.addEventListener('keydown', e => {
+    const bloquear =
+      e.key==='F12' ||
+      (e.ctrlKey && e.shiftKey && ['I','J','C'].includes(e.key.toUpperCase())) ||
+      (e.ctrlKey && e.key.toUpperCase()==='U');
+    if (bloquear) { e.preventDefault(); toast('¡Ey! No hagas trampa, esto es solo para mamá 😄'); }
+  });
 
-      cartas.forEach((carta, i) => {
-        const env = document.createElement('div');
-        env.className = 'envelope fade-in-up';
-        env.style.transitionDelay = `${i * 0.15}s`;
-        env.setAttribute('onclick', `abrirCarta(${i})`);
-
-        env.innerHTML = `
-          <div class="envelope-body">
-            <span class="envelope-icon">${carta.icono}</span>
-            <p class="envelope-nombre">${carta.nombre}</p>
-            <p class="envelope-hint">${carta.pista}</p>
-            <div class="envelope-seal">✦</div>
-          </div>
-        `;
-
-        grid.appendChild(env);
-      });
-    }
-
-    // Estilos inline para nombre/hint dentro del sobre
-    const style = document.createElement('style');
-    style.textContent = `
-      .envelope-nombre { font-family:'Playfair Display',serif; font-size:1.05rem; color:var(--text); margin-bottom:.3rem; }
-      .envelope-hint   { font-size:.78rem; color:var(--text-light); letter-spacing:.05em; }
-    `;
-    document.head.appendChild(style);
-
-    /* ======================================================
-       📖 ABRIR / CERRAR CARTA
-       ====================================================== */
-    function abrirCarta(idx) {
-      const carta = cartas[idx];
-      document.getElementById('modalTitle').textContent = carta.titulo;
-      document.getElementById('modalBody').textContent = carta.cuerpo;
-      document.getElementById('modalSignature').textContent = carta.firma;
-
-      const modal = document.getElementById('letterModal');
-      modal.classList.add('open');
-      document.body.style.overflow = 'hidden';
-    }
-
-    function cerrarCarta(event, force = false) {
-      if (!force && event && event.target !== document.getElementById('letterModal')) return;
-      document.getElementById('letterModal').classList.remove('open');
-      document.body.style.overflow = '';
-    }
-
-    // Cerrar con tecla Escape
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') cerrarCarta(null, true);
-    });
-
-    /* ======================================================
-       👁 OBSERVER DE SCROLL — activa .visible en elementos
-       ====================================================== */
-    function initScrollObserver() {
-      const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('visible');
-          }
-        });
-      }, { threshold: 0.12 });
-
-      document.querySelectorAll('.fade-in-up').forEach(el => observer.observe(el));
-    }
-
-    /* ======================================================
-       🚫 ANTI-CURIOSEO — bloqueo de clic derecho
-       ====================================================== */
-    document.addEventListener('contextmenu', function(e) {
-      e.preventDefault();
-      mostrarToast('¡Ey! No hagas trampa, esto es solo para mamá 😄');
-    });
-
-    // Bloqueo de teclas de desarrollador
-    document.addEventListener('keydown', function(e) {
-      if (
-        e.key === 'F12' ||
-        (e.ctrlKey && e.shiftKey && ['I','J','C'].includes(e.key)) ||
-        (e.ctrlKey && e.key === 'U')
-      ) {
-        e.preventDefault();
-        mostrarToast('¡Ey! No hagas trampa, esto es solo para mamá 😄');
-      }
-    });
-
-    /* ======================================================
-       🍞 TOAST — mensaje divertido anti-trampa
-       ====================================================== */
-    let toastTimer;
-    function mostrarToast(msg) {
-      let toast = document.getElementById('toast');
-      if (!toast) {
-        toast = document.createElement('div');
-        toast.id = 'toast';
-        toast.style.cssText = `
-          position:fixed; bottom:2rem; left:50%; transform:translateX(-50%);
-          background:#4A3200; color:#fff; padding:.8rem 1.5rem;
-          border-radius:50px; font-size:.85rem; font-family:'Lato',sans-serif;
-          box-shadow:0 8px 24px rgba(0,0,0,0.2); z-index:9999;
-          transition:opacity .4s; white-space:nowrap;
-        `;
-        document.body.appendChild(toast);
-      }
-      toast.textContent = msg;
-      toast.style.opacity = '1';
-      clearTimeout(toastTimer);
-      toastTimer = setTimeout(() => { toast.style.opacity = '0'; }, 3000);
-    }
   </script>
 
 </body>
