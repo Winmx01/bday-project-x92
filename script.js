@@ -10,8 +10,8 @@ document.addEventListener('DOMContentLoaded', () => {
    ⚙️  CONFIGURACIÓN — ✏️ EDITA SOLO ESTE BLOQUE
    ══════════════════════════════════════════════════════════════════ */
 const CONFIG = {
-  PASSWORD: "amor",   // ← CAMBIA ESTO
-  WARNING_MSG: "¡Ey! No hagas trampa, esto es solo para mamá 😄",
+  PASSWORD: "champa",   // ← CAMBIA ESTO
+  WARNING_MSG: "¡Ey! No hagas trampa, esto es solo para mami 😄",
   TIMINGS: { UNLOCK: 700, CONFETTI_DELAY: 420, SHAKE: 850, TOAST: 3200 }
 };
 
@@ -24,12 +24,12 @@ const CONFIG = {
    ══════════════════════════════════════════════════════════════════ */
 
 const CATEGORY_META = {
-  mami:       { emoji: '👩',        label: 'Mamá'       },
+  mami:       { emoji: '💚',        label: 'Mami'       },
   mamita:     { emoji: '💕',        label: 'Mamita'     },
-  hermanitos: { emoji: '👨‍👩‍👧‍👦', label: 'Hermanitos' },
-  lostres:    { emoji: '👨‍👩‍👧',  label: 'Los Tres'   },
-  tin:        { emoji: '🎭',        label: 'Tin'        },
-  tita:       { emoji: '✨',        label: 'Tita'       }
+  hermanitos: { emoji: '💚💛❤️', label: 'Hermanitos' },
+  lostres:    { emoji: '💛❤️',  label: 'Los Tres'   },
+  tin:        { emoji: '💛',        label: 'Tin'        },
+  tita:       { emoji: '❤️',        label: 'Tita'       }
 };
 
 const ALBUM_PHOTOS = {
@@ -50,12 +50,11 @@ const ALBUM_PHOTOS = {
     'fotos/hermanitos1.jpg',  'fotos/hermanitos2.jpg',  'fotos/hermanitos3.jpg',
     'fotos/hermanitos4.jpg',  'fotos/hermanitos5.jpg',  'fotos/hermanitos6.jpg',
     'fotos/hermanitos7.jpg',  'fotos/hermanitos8.jpg',  'fotos/hermanitos9.jpg',
-    'fotos/hermanitos10.jpg', 'fotos/hermanitos11.jpg', 'fotos/hermanitos12.jpg',
-    'fotos/hermanitos13.jpg', 'fotos/hermanitos14.jpg', 'fotos/hermanitos15.jpg'
+    'fotos/hermanitos10.jpg'
   ],
 
   lostres: [
-    'fotos/lostres1.webp', 'fotos/lostres2.jpg',  'fotos/lostres3.jpg',
+    'fotos/lostres1.jpg', 'fotos/lostres2.jpg',  'fotos/lostres3.jpg',
     'fotos/lostres4.jpg',  'fotos/lostres5.jpg',  'fotos/lostres6.jpg',
     'fotos/lostres7.jpg',  'fotos/lostres8.jpg',  'fotos/lostres9.jpg',
     'fotos/lostres10.jpg', 'fotos/lostres11.jpg', 'fotos/lostres12.jpg'
@@ -78,43 +77,21 @@ const ALBUM_PHOTOS = {
    ══════════════════════════════════════════════════════════════════ */
 const cartas = [
   {
-    icono: "💌", nombre: "De tu hijo/a mayor", pista: "Una carta desde el corazón",
+    icono: "💌", nombre: "De tu hijo mayor", pista: "Una carta desde el corazón 💛",
     titulo: "Querida Mamá",
-    cuerpo: `Hay personas que no necesitan haber visto el mundo para entenderlo. Tú eres una de esas personas. Desde niño/a supe que eras diferente: tenías una forma de ver las cosas que hacía que todo pareciera posible.
-
-Recuerdo cuando me caí de la bicicleta por primera vez y corriste hacia mí antes de que pudiera llorar. No dijiste "te lo dije". Solo me abrazaste y me dijiste: "Los valientes también se caen".
-
-Hoy, con los años que tengo, sigo escuchando esa frase cuando las cosas se ponen difíciles. Esa eres tú: la voz que me sostiene aún cuando no estás.
-
-Gracias por enseñarme que el amor no se dice, se demuestra.`,
-    firma: "Con todo mi amor, tu hijo/a 🌸"
+    cuerpo: `carta martin`,
+    firma: "Con todo mi amor, tu hijo 💛"
   },
   {
-    icono: "🌹", nombre: "Una promesa para ti", pista: "Algo que siempre quisimos decirte",
-    titulo: "Nuestra Promesa",
-    cuerpo: `Mamá,
-
-Prometemos nunca olvidar el sacrificio silencioso que has hecho por nosotros. Esas noches que no dormiste, esas renuncias que nunca nombraste, esos sueños que pausaste para que los nuestros pudieran crecer.
-
-Prometemos llamarte más seguido, no solo cuando necesitamos algo, sino para preguntarte cómo estás tú.
-
-Prometemos cuidarte como tú nos has cuidado. Con paciencia, con ternura.
-
-Y sobre todo, prometemos decirte "te quiero" más veces. La vida es corta y tú mereces escucharlo todos los días.`,
-    firma: "Tus hijos, para siempre 💛"
+    icono: "💌", nombre: "De tu hijo menor", pista: "Una carta desde el corazón ❤️",
+    titulo: "Querida Mamá",
+    cuerpo: `carta jota`,
+    firma: "Con todo mi amor, tu hijo ❤️"
   },
   {
     icono: "⭐", nombre: "Lo que el mundo ve en ti", pista: "Cosas que quizás no sabes de ti misma",
     titulo: "Lo Que Tú No Ves",
-    cuerpo: `Mamá, probablemente no lo sabes, pero…
-
-Cuando entras a una habitación, la temperatura sube un par de grados. Hay algo en tu presencia que hace que todo se sienta más seguro, más cálido, más en su lugar.
-
-La gente habla de ti con una sonrisa involuntaria. "Tu mamá es increíble", nos dicen. Y nosotros solo respondemos: "Lo sabemos".
-
-Pero lo más increíble de todo es que con todo lo extraordinaria que eres, sigues siendo simplemente… mamá. Nuestra mamá. El centro de nuestra historia.
-
-Feliz cumpleaños a la persona más especial de nuestro universo.`,
+    cuerpo: `cosas bonitas de mi mami`,
     firma: "Con admiración infinita 🌟"
   }
 ];
