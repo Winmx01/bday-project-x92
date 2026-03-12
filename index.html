@@ -29,17 +29,17 @@
        archivos externos. Fallback a fuentes del sistema.
        ════════════════════════════════════════════════════ -->
   <style>
-    /* ── Paleta "Champagne & Rose" ──────────────────────── */
+    /* ── Paleta "Botanical Green" ───────────────────────── */
     :root {
-      --bg:         #FFFDF9;
-      --gold:       #C9A84C;
-      --gold-lt:    #e8d08a;
-      --gold-dk:    #9a7425;
-      --text:       #3a3328;
-      --text-soft:  #7a6f63;
-      --rose:       #f5e6e6;
-      --card:       #fffaf3;
-      --border:     rgba(201,168,76,0.28);
+      --bg:         #F4FAF4;       /* fondo verde muy suave        */
+      --gold:       #3a7d44;       /* verde principal (botones…)   */
+      --gold-lt:    #84c491;       /* verde claro (anillos, hover) */
+      --gold-dk:    #1f5c2e;       /* verde oscuro (énfasis)       */
+      --text:       #1a2e1c;       /* texto principal              */
+      --text-soft:  #5a7260;       /* texto secundario             */
+      --rose:       #e0f0e3;       /* fondo suave para slots       */
+      --card:       #f0f8f1;       /* fondo de tarjetas            */
+      --border:     rgba(58,125,68,0.25);
 
       /* Sistema primero → Google Fonts cuando esté lista */
       --serif: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
@@ -56,10 +56,10 @@
       color: var(--text);
       min-height: 100vh;
       overflow-x: hidden;
-      /* Degradado atmosférico: cero HTTP request */
+      /* Degradado atmosférico verde: cero HTTP request */
       background-image:
-        radial-gradient(circle at 15% 15%, rgba(201,168,76,.07) 0%, transparent 55%),
-        radial-gradient(circle at 85% 85%, rgba(245,230,230,.35) 0%, transparent 55%);
+        radial-gradient(circle at 15% 15%, rgba(58,125,68,.09) 0%, transparent 55%),
+        radial-gradient(circle at 85% 85%, rgba(132,196,145,.18) 0%, transparent 55%);
     }
 
     h1,h2,h3 { font-family: var(--serif); font-weight: 400; }
@@ -90,7 +90,7 @@
 
     .sk-bar {
       height: 9px; border-radius: 8px;
-      background: linear-gradient(90deg, #f0e8d0 25%, #fffaf0 50%, #f0e8d0 75%);
+      background: linear-gradient(90deg, #d4ecda 25%, #f0f8f1 50%, #d4ecda 75%);
       background-size: 200% 100%;
       animation: shimmer 1.4s ease infinite;
     }
@@ -117,7 +117,7 @@
       border-radius: 24px;
       padding: 3rem 2.4rem;
       text-align: center;
-      box-shadow: 0 2px 8px rgba(0,0,0,.04), 0 20px 60px rgba(201,168,76,.10);
+      box-shadow: 0 2px 8px rgba(0,0,0,.04), 0 20px 60px rgba(58,125,68,.10);
       animation: card-in .65s cubic-bezier(.34,1.56,.64,1) both;
     }
     @keyframes card-in {
@@ -147,7 +147,7 @@
     .lock-input::placeholder { color:#c0b8ab; }
     .lock-input:focus {
       border-color:var(--gold);
-      box-shadow:0 0 0 3px rgba(201,168,76,.14);
+      box-shadow:0 0 0 3px rgba(58,125,68,.14);
     }
 
     .lock-btn {
@@ -156,10 +156,10 @@
       color:#fff; border:none; border-radius:12px;
       font-family:var(--serif); font-size:1.05rem; letter-spacing:.07em;
       cursor:pointer;
-      box-shadow:0 4px 16px rgba(201,168,76,.30);
+      box-shadow:0 4px 16px rgba(58,125,68,.30);
       transition:transform .2s, box-shadow .2s;
     }
-    .lock-btn:hover { transform:translateY(-2px); box-shadow:0 8px 24px rgba(201,168,76,.42); }
+    .lock-btn:hover { transform:translateY(-2px); box-shadow:0 8px 24px rgba(58,125,68,.42); }
     .lock-btn:active { transform:translateY(0); }
 
     .lock-error {
@@ -211,7 +211,7 @@
       overflow:hidden;
       border:3.5px solid var(--gold);
       box-shadow:0 0 0 8px rgba(201,168,76,.08);
-      background:linear-gradient(135deg, var(--rose), #fff3d0);
+      background:linear-gradient(135deg, var(--rose), #c8e8ce);
       display:flex; align-items:center; justify-content:center;
       font-size:4.5rem;
     }
@@ -281,7 +281,7 @@
     }
     .g-card:hover {
       transform:translateY(-6px) scale(1.02);
-      box-shadow:0 14px 40px rgba(201,168,76,.22);
+      box-shadow:0 14px 40px rgba(58,125,68,.22);
     }
 
     .g-ph {
@@ -329,7 +329,7 @@
        ════════════════════════════════════════════════════ */
     #letters {
       padding:5rem 1.5rem;
-      background:linear-gradient(180deg,var(--bg) 0%,#fff8ed 100%);
+      background:linear-gradient(180deg,var(--bg) 0%,#e8f5ea 100%);
     }
     .letters-wrap { max-width:700px; margin:0 auto; }
 
@@ -338,10 +338,10 @@
     .acc-item {
       background:#fff;
       border:1px solid var(--border); border-radius:16px; overflow:hidden;
-      box-shadow:0 2px 12px rgba(201,168,76,.07);
+      box-shadow:0 2px 12px rgba(58,125,68,.07);
       transition:box-shadow .3s;
     }
-    .acc-item:hover { box-shadow:0 6px 24px rgba(201,168,76,.15); }
+    .acc-item:hover { box-shadow:0 6px 24px rgba(58,125,68,.15); }
 
     .acc-summary {
       list-style:none; display:flex; align-items:center; gap:1rem;
@@ -379,7 +379,7 @@
     .acc-letter-head {
       font-family:var(--serif); font-size:1.25rem;
       color:var(--text); padding:1.2rem 0 .8rem;
-      border-bottom:1px solid rgba(201,168,76,.12); margin-bottom:1.2rem;
+      border-bottom:1px solid rgba(58,125,68,.12); margin-bottom:1.2rem;
     }
     .acc-letter-body {
       font-size:.97rem; font-weight:300;
@@ -502,24 +502,30 @@
         <div class="hero-ring"></div>
 
         <!--
-          El .hero-slot reserva 190×190px con color de fondo
-          → El layout NO salta cuando carga la imagen (CLS=0)
+          ════════════════════════════════════════════
+          📸 [FOTO 1] FOTO PRINCIPAL DE MAMÁ
+          ════════════════════════════════════════════
+          OPCIÓN A — foto subida al repo de GitHub:
+            1. Sube "mama.jpg" junto a index.html
+            2. Borra la línea con el emoji 🌸
+            3. Descomenta la línea <img> de abajo
 
-          Para usar una foto real:
-          1. Comenta la línea del emoji 🌸
-          2. Descomenta: <img src="mama.jpg" alt="Mamá" loading="lazy" />
+          OPCIÓN B — foto desde URL externa (imgbb, etc):
+            img src="https://i.ibb.co/xxxx/mama.jpg"
+
+          El fondo verde del slot se ve mientras carga → CLS=0
+          ════════════════════════════════════════════
         -->
         <div class="hero-slot" aria-label="Foto de mamá">
-          <!-- 📸 FOTO REAL:
-          <img src="mama.jpg" alt="Mamá" loading="lazy" />
-          -->
-          🌸
+          <!-- Borra el emoji y descomenta para usar foto real: -->
+          <!-- <img src="mama.jpg" alt="Mamá" loading="lazy" /> -->
+          🌿
         </div>
       </div>
 
       <p class="hero-eyebrow">✦ Feliz Cumpleaños ✦</p>
 
-      <!-- ✏️ EDITA el título -->
+      <!-- ✏️ [TEXTO 1] EDITA el título principal del hero -->
       <h1 class="hero-title">
         Para la mujer que<br/>
         <em>nos lo enseñó todo</em>
@@ -527,7 +533,7 @@
 
       <div class="gold-line hero-divider"></div>
 
-      <!-- ✏️ EDITA el mensaje de bienvenida -->
+      <!-- ✏️ [TEXTO 2] EDITA el mensaje de bienvenida (~3 líneas recomendado) -->
       <p class="hero-msg">
         Hoy el mundo cumple un año más de tenerte, y nosotros un año más de ser
         los más afortunados por llamarte mamá. Esta pequeña página es nuestra
@@ -557,9 +563,9 @@
     <!-- ── FOOTER ──────────────────────────────────────── -->
     <footer id="footer">
       <div class="gold-line reveal"></div>
-      <!-- ✏️ EDITA la cita -->
+      <!-- ✏️ [TEXTO 3] EDITA la cita del footer -->
       <p class="footer-quote reveal d1">"El hogar no es un lugar, eres tú."</p>
-      <p class="footer-hearts reveal d2">🌸 ✦ 🌸</p>
+      <p class="footer-hearts reveal d2">🌿 ✦ 🌿</p>
     </footer>
 
   </main>
@@ -590,33 +596,84 @@
 
   /* ══════════════════════════════════════════════════════
      ✏️  CONFIGURACIÓN — edita solo estos bloques
-     ══════════════════════════════════════════════════════ */
+     ══════════════════════════════════════════════════════
+
+     ┌─────────────────────────────────────────────────────┐
+     │  GUÍA RÁPIDA DE PERSONALIZACIÓN                     │
+     ├─────────────────────────────────────────────────────┤
+     │                                                     │
+     │  1. CLAVE DE ACCESO          → línea ~596           │
+     │     const CLAVE = "amor"                            │
+     │     Cambia "amor" por tu palabra secreta.           │
+     │                                                     │
+     │  2. PREGUNTA EN LA PANTALLA  → línea ~477 (HTML)    │
+     │     Busca: "¿Cuál es nuestro secreto..."            │
+     │     Reemplaza con tu propia pregunta familiar.      │
+     │                                                     │
+     │  3. FOTO PRINCIPAL (hero)    → línea ~512 (HTML)    │
+     │     Busca el bloque .hero-slot                      │
+     │     Borra el emoji 🌸 y descomenta:                 │
+     │       <img src="TU_FOTO.jpg" ... />                 │
+     │     Si subes la foto al repo → usa "mama.jpg"       │
+     │     Si usas Google Photos → pega la URL directa     │
+     │                                                     │
+     │  4. GALERÍA DE FOTOS         → array recuerdos ↓   │
+     │     img: null       → muestra el emoji              │
+     │     img: "foto.jpg" → muestra tu foto               │
+     │     img: "https://…"→ URL externa                   │
+     │     legend: "texto" → leyenda al hacer hover        │
+     │     year:   "2023"  → año o época del recuerdo      │
+     │                                                     │
+     │  5. CARTAS / MENSAJES        → array cartas ↓       │
+     │     nombre: "título del sobre"                      │
+     │     pista:  "subtítulo pequeño"                     │
+     │     titulo: "encabezado dentro de la carta"         │
+     │     cuerpo: `tu texto largo aquí`                   │
+     │     firma:  "firma al pie"                          │
+     │                                                     │
+     │  6. TEXTOS GENERALES (HTML)                         │
+     │     • Título hero  → busca ✏️ EDITA el título       │
+     │     • Mensaje hero → busca ✏️ EDITA el mensaje      │
+     │     • Cita footer  → busca ✏️ EDITA la cita         │
+     │                                                     │
+     │  💡 CÓMO AÑADIR FOTOS AL REPO DE GITHUB:           │
+     │     1. Sube tus fotos junto al index.html           │
+     │     2. Usa el nombre exacto: img: "foto1.jpg"       │
+     │     3. Para URLs externas copia el enlace directo   │
+     │        (Google Drive no funciona directamente;      │
+     │         usa imgbb.com o similar como hosting)       │
+     └─────────────────────────────────────────────────────┘
+  */
 
   // 🔑 Clave de acceso (se compara en minúsculas)
   const CLAVE = "amor"; // ← CAMBIA ESTO
 
-  /* ── Recuerdos ──────────────────────────────────────────
-     emoji : placeholder si img es null
-     img   : ruta o URL de la foto (null = usa emoji)
-     legend: texto al hacer hover
-     year  : año o época
+  /* ── [GALERÍA] Recuerdos ────────────────────────────────
+     📸 CÓMO PONER TUS FOTOS:
+       img: null          → muestra el emoji como placeholder
+       img: "foto1.jpg"   → foto subida al repo (mismo nivel)
+       img: "https://…"   → URL de imgbb.com u otro hosting
+
+     ✏️ EDITA legend y year con tus textos reales.
+     Puedes agregar o borrar líneas { } para más/menos fotos.
   ──────────────────────────────────────────────────────── */
   const recuerdos = [
-    { emoji:"🏡", img:null, legend:"El hogar que construiste con tanto amor",       year:"Siempre"        },
-    { emoji:"🎂", img:null, legend:"Cada cumpleaños con más risas que el anterior", year:"2023"           },
-    { emoji:"🌊", img:null, legend:"Ese verano en la playa que nunca olvidaremos",  year:"2021"           },
-    { emoji:"🍽️",img:null, legend:"Tus domingos de cocina que huelen a hogar",    year:"Cada domingo"   },
-    { emoji:"🌺", img:null, legend:"Tu jardín, tu santuario, tu obra de arte",      year:"Cada primavera" },
-    { emoji:"📚", img:null, legend:"La primera vez que me leíste un cuento",        year:"El principio"   }
+    // { emoji, img, legend, year }
+    { emoji:"🏡", img:null,          legend:"El hogar que construiste con tanto amor",       year:"Siempre"        },
+    { emoji:"🎂", img:null,          legend:"Cada cumpleaños con más risas que el anterior", year:"2023"           },
+    { emoji:"🌊", img:null,          legend:"Ese verano en la playa que nunca olvidaremos",  year:"2021"           },
+    { emoji:"🍽️",img:null,          legend:"Tus domingos de cocina que huelen a hogar",     year:"Cada domingo"   },
+    { emoji:"🌺", img:null,          legend:"Tu jardín, tu santuario, tu obra de arte",      year:"Cada primavera" },
+    { emoji:"📚", img:null,          legend:"La primera vez que me leíste un cuento",        year:"El principio"   }
+    // Ejemplo con foto real:
+    // { emoji:"🌿", img:"familia2022.jpg", legend:"Navidad 2022", year:"2022" },
   ];
 
-  /* ── Cartas ─────────────────────────────────────────────
-     icono  : emoji del sobre
-     nombre : título visible
-     pista  : subtítulo pequeño
-     titulo : encabezado dentro de la carta
-     cuerpo : texto (usa \n para párrafos)
-     firma  : pie de firma
+  /* ── [CARTAS] Mensajes secretos ────────────────────────
+     ✏️ EDITA cada propiedad con tus mensajes reales.
+     Puedes agregar o borrar bloques { } para más/menos cartas.
+     Para saltos de párrafo dentro del cuerpo usa una
+     línea en blanco dentro de los backticks ` `.
   ──────────────────────────────────────────────────────── */
   const cartas = [
     {
@@ -703,7 +760,7 @@ Feliz cumpleaños a la persona más especial de nuestro universo.`,
      ══════════════════════════════════════════════════════ */
   function lanzarConfeti() {
     if (typeof confetti === 'undefined') { setTimeout(lanzarConfeti, 200); return; }
-    const c = ['#C9A84C','#e8d08a','#fff3d0','#f5e6e6','#fff'];
+    const c = ['#3a7d44','#84c491','#c8f0d0','#e0f4e4','#fff'];
     confetti({ particleCount:110, spread:75, origin:{y:.55}, colors:c, scalar:1.15 });
     setTimeout(() => {
       confetti({ particleCount:70, angle:60,  spread:55, origin:{x:0}, colors:c });
@@ -716,9 +773,9 @@ Feliz cumpleaños a la persona más especial de nuestro universo.`,
      ══════════════════════════════════════════════════════ */
   // Degradados CSS para placeholders — cero imágenes externas
   const bgs = [
-    ['#fff3d0','#f5e6e6'],['#f5e6e6','#fff3d0'],
-    ['#e8f4f0','#d4f0e8'],['#f0e8ff','#f5e6e6'],
-    ['#fff3d0','#e8f4f0'],['#f5e6e6','#f0e8ff']
+    ['#d4ecda','#c8f0d0'],['#c8f0d0','#d4ecda'],
+    ['#e0f4e4','#b8e8c0'],['#ddf0e0','#c8f0d0'],
+    ['#d4ecda','#e0f4e4'],['#c8f0d0','#ddf0e0']
   ];
 
   function buildGallery() {
