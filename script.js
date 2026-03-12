@@ -78,15 +78,16 @@ const ALBUM_PHOTOS = {
 const cartas = [
   {
     icono: "💌", nombre: "De tu hijo mayor", pista: "Una carta desde el corazón 💛",
-    titulo: "Querida Mamá",
+    titulo: "Querida Mami",
     cuerpo: `carta martin`,
-    firma: "Con todo mi amor, tu hijo 💛"
+    firma: "Con todo mi amor, tin 💛"
   },
   {
     icono: "💌", nombre: "De tu hijo menor", pista: "Una carta desde el corazón ❤️",
-    titulo: "Querida Mamá",
-    cuerpo: `carta jota`,
-    firma: "Con todo mi amor, tu hijo ❤️"
+    titulo: "Querida Mami",
+    cuerpo: `Mami, eres la persona más importante en mi vida, no solo haz sido mi madre si no una amiga en la que puedo contar. De un día para otro me convertí en parte de tu vida y agradezco que me hayas tocado como madre pues nadie lo hubiera hecho mejor.El tiempo pasa muy rápido y quiero pasarlo junto a ti, me falta una vida entera para agradecerte lo que haces y lo que has hecho.Te amo mucho mami y te doy gracias por el trabajo arduo que haces día a día para cuidarme.
+Por último quiero que sepas que no solo eres una gran mamá y amiga si no una gran persona en general, eres inteligente, carismática, bonita, empatica, amorosa, emprendedora, resiliente y fuerte.`,
+    firma: "Con todo mi amor, tita❤️"
   },
   {
     icono: "⭐", nombre: "Lo que el mundo ve en ti", pista: "Cosas que quizás no sabes de ti misma",
